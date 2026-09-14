@@ -1,0 +1,224 @@
+:host {
+  display: block;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sidebar-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-logo-link:hover {
+  transform: scale(1.05);
+}
+
+.sidebar-logo-link:hover .sidebar-logo {
+  opacity: 0.9;
+}
+
+/* Theme Picker */
+.theme-picker {
+  display: inline-block;
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  padding: 8px;
+  min-width: 180px;
+  z-index: 1001;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.theme-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.theme-item:hover {
+  background: #f5f5f5;
+}
+
+.theme-item.active {
+  background: var(--royal-green-pale);
+}
+
+.theme-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.1);
+}
+
+.theme-item span {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* User Menu */
+.user-info {
+  overflow: visible;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  min-width: 220px;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+.user-dropdown .dropdown-header {
+  padding: 12px 16px;
+  background: var(--off-white);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-dropdown .dropdown-item {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-dark);
+}
+
+.user-dropdown .dropdown-item:hover {
+  background: var(--royal-green-pale);
+  color: var(--royal-green-dark);
+}
+
+.user-dropdown .dropdown-item.text-danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+:root[data-theme='dark'] .user-dropdown {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+:root[data-theme='dark'] .user-dropdown .dropdown-header {
+  background: #111827;
+  border-color: #374151;
+}
+
+:root[data-theme='dark'] .user-dropdown .dropdown-item {
+  color: #e5e7eb;
+}
+
+:root[data-theme='dark'] .user-dropdown .dropdown-item:hover {
+  background: rgba(20, 184, 166, 0.14);
+  color: #5eead4;
+}
+
+:root[data-theme='dark'] .user-dropdown .dropdown-item.text-danger:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+}
+
+/* Sidebar Hotel Switcher */
+.sidebar-hotel-switcher {
+  padding: 8px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hotel-switcher-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-hotel-switcher select {
+  width: 100%;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-hotel-switcher select:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-hotel-switcher select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--royal-green);
+  box-shadow: 0 0 0 3px rgba(27, 107, 58, 0.25);
+  outline: none;
+}
+
+.sidebar-hotel-switcher select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sidebar-hotel-switcher select option {
+  background: #2c3e50;
+  color: white;
+}
+

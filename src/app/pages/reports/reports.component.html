@@ -1,0 +1,227 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Reports</h3>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <label class="form-label fw-semibold">Report Type</label>
+    <select class="form-select" [(ngModel)]="reportType">
+      <option value="revenue">Revenue Report</option>
+      <option value="occupancy">Occupancy Report</option>
+      <option value="bookings">Bookings Report</option>
+      <option value="staff">Staff Report</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label fw-semibold">Start Date</label>
+    <input type="date" class="form-control" [(ngModel)]="startDate">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label fw-semibold">End Date</label>
+    <input type="date" class="form-control" [(ngModel)]="endDate">
+  </div>
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-primary w-100" (click)="generateReport()">
+      <i class="bi bi-file-earmark-bar-graph"></i> Generate
+    </button>
+  </div>
+</div>
+
+<!-- Revenue Report -->
+<div *ngIf="reportType === 'revenue' && reportData" class="card">
+  <div class="card-header bg-white fw-semibold">Revenue Summary</div>
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.totalRevenue || 0 | number }} Tsh</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.paidAmount || 0 | number }} Tsh</div>
+          <div class="stat-label">Amount Collected</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.pendingAmount || 0 | number }} Tsh</div>
+          <div class="stat-label">Pending Amount</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.invoiceCount || 0 }}</div>
+          <div class="stat-label">Total Invoices</div>
+        </div>
+      </div>
+    </div>
+    <div class="table-container mt-4" *ngIf="reportData.details?.length">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Guest</th>
+            <th>Total</th>
+            <th>Paid</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of reportData.details">
+            <td>#{{ d.id }}</td>
+            <td>{{ d.Customer?.fullName }}</td>
+            <td>{{ d.totalAmount | number }} Tsh</td>
+            <td>{{ d.paidAmount | number }} Tsh</td>
+            <td><span class="badge" [ngClass]="'badge-' + d.paymentStatus">{{ d.paymentStatus }}</span></td>
+            <td>{{ d.createdAt | date:'mediumDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Occupancy Report -->
+<div *ngIf="reportType === 'occupancy' && reportData" class="card">
+  <div class="card-header bg-white fw-semibold">Occupancy Summary</div>
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.totalRooms || 0 }}</div>
+          <div class="stat-label">Total Rooms</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.occupiedRooms || 0 }}</div>
+          <div class="stat-label">Occupied</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.availableRooms || 0 }}</div>
+          <div class="stat-label">Available</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.occupancyRate || 0 }}%</div>
+          <div class="stat-label">Occupancy Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bookings Report -->
+<div *ngIf="reportType === 'bookings' && reportData" class="card">
+  <div class="card-header bg-white fw-semibold">Bookings Summary</div>
+  <div class="card-body">
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.totalBookings || 0 }}</div>
+          <div class="stat-label">Total Bookings</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.confirmedCount || 0 }}</div>
+          <div class="stat-label">Confirmed</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.checkedInCount || 0 }}</div>
+          <div class="stat-label">Checked In</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.cancelledCount || 0 }}</div>
+          <div class="stat-label">Cancelled</div>
+        </div>
+      </div>
+    </div>
+    <div class="table-container" *ngIf="reportData.details?.length">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Guest</th>
+            <th>Room</th>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of reportData.details">
+            <td>{{ b.Customer?.fullName }}</td>
+            <td>{{ b.Room?.roomNumber }}</td>
+            <td>{{ b.checkIn }}</td>
+            <td>{{ b.checkOut }}</td>
+            <td><span class="badge" [ngClass]="'badge-' + b.status">{{ b.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Report -->
+<div *ngIf="reportType === 'staff' && reportData" class="card">
+  <div class="card-header bg-white fw-semibold">Staff Shifts Summary</div>
+  <div class="card-body">
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.totalShifts || 0 }}</div>
+          <div class="stat-label">Total Shifts</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.completedShifts || 0 }}</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-number">{{ reportData.staffCount || 0 }}</div>
+          <div class="stat-label">Active Staff</div>
+        </div>
+      </div>
+    </div>
+    <div class="table-container" *ngIf="reportData.details?.length">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Staff</th>
+            <th>Shift Type</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of reportData.details">
+            <td>{{ s.User?.username }}</td>
+            <td>{{ s.shiftType }}</td>
+            <td>{{ s.date }}</td>
+            <td>{{ s.startTime }} - {{ s.endTime }}</td>
+            <td><span class="badge" [ngClass]="'badge-' + s.status">{{ s.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!reportData" class="text-center text-muted py-5">
+  <i class="bi bi-bar-chart-line" style="font-size: 3rem;"></i>
+  <p class="mt-2">Select a report type and date range, then click Generate</p>
+</div>

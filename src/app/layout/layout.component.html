@@ -1,0 +1,191 @@
+<div class="app-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a routerLink="/home" class="sidebar-logo-link">
+        <img src="assets/images/NABO.png" alt="NABO Logo" class="sidebar-logo">
+      </a>
+      <div>
+        <small>Hotel Management System</small>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <!-- Hotel Switcher -->
+      <div class="sidebar-hotel-switcher">
+        <div class="hotel-switcher-label">
+          <i class="bi bi-building"></i> Current Hotel
+        </div>
+        <select class="form-select form-select-sm" [ngModel]="selectedHotelId" (ngModelChange)="switchHotel($event)" [disabled]="hotels.length === 0">
+          <option [ngValue]="null" *ngIf="hotels.length === 0">Loading...</option>
+          <option [ngValue]="null" *ngIf="hotels.length > 0">All Hotels</option>
+          <option *ngFor="let h of hotels" [value]="h.id">{{ h.name }}</option>
+        </select>
+      </div>
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="clearCategory()">
+        <i class="bi bi-house-fill"></i> Home
+      </a>
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </a>
+
+      <div class="sidebar-section-label" *ngIf="shouldShowSection('operations')">Operations</div>
+      <a routerLink="/rooms" routerLinkActive="active" *ngIf="canView('rooms') && shouldShowSection('operations')">
+        <i class="bi bi-door-open-fill"></i> Rooms
+      </a>
+      <a routerLink="/bookings" routerLinkActive="active" *ngIf="canView('bookings') && shouldShowSection('operations')">
+        <i class="bi bi-calendar-check-fill"></i> Bookings
+      </a>
+      <a routerLink="/customers" routerLinkActive="active" *ngIf="canView('customers') && shouldShowSection('operations')">
+        <i class="bi bi-people-fill"></i> Customers
+      </a>
+      <div class="sidebar-section-label" *ngIf="canView('inventory') && shouldShowSection('inventory')">Inventory</div>
+      <a routerLink="/inventory" routerLinkActive="active" *ngIf="canView('inventory') && shouldShowSection('inventory')">
+        <i class="bi bi-box-seam"></i> Items
+      </a>
+      <a routerLink="/inventory/categories" routerLinkActive="active" *ngIf="canView('inventory') && shouldShowSection('inventory')">
+        <i class="bi bi-folder"></i> Categories
+      </a>
+
+      <div class="sidebar-section-label" *ngIf="canView('billing') && shouldShowSection('finance')">Finance</div>
+      <!-- <a routerLink="/finance" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-cash-coin"></i> Finance Overview
+      </a> -->
+      <a routerLink="/billing" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-receipt-cutoff"></i> Billing &amp; Invoices
+      </a>
+      <a routerLink="/refunds" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-arrow-counterclockwise"></i> Refund Management
+      </a>
+      <a routerLink="/expenses" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-wallet2"></i> Expense Management
+      </a>
+      <a routerLink="/salary" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-cash-coin"></i> Salary Management
+      </a>
+      <a routerLink="/reports" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-file-earmark-bar-graph"></i> Financial Reports
+      </a>
+      <!-- <a routerLink="/finance/tax" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-percent"></i> Tax Management
+      </a>
+      <a routerLink="/finance/cashier-shifts" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-cash-stack"></i> Cashier &amp; Shifts
+      </a>
+      <a routerLink="/finance/integrations" routerLinkActive="active" *ngIf="canView('billing') && shouldShowSection('finance')">
+        <i class="bi bi-diagram-3"></i> Integrations
+      </a> -->
+
+      <div class="sidebar-section-label" *ngIf="canView('restaurant') && shouldShowSection('restaurant')">Restaurant</div>
+      <a routerLink="/restaurant" routerLinkActive="active" *ngIf="canView('restaurant') && shouldShowSection('restaurant')">
+        <i class="bi bi-shop"></i> Restaurant Management
+      </a>
+      <a routerLink="/restaurant/bookings" routerLinkActive="active" *ngIf="canView('restaurant') && shouldShowSection('restaurant')">
+        <i class="bi bi-calendar-check"></i> Table Bookings
+      </a>
+      <a routerLink="/restaurant/orders" routerLinkActive="active" *ngIf="canView('restaurant') && shouldShowSection('restaurant')">
+        <i class="bi bi-cart"></i> Menu Orders
+      </a>
+
+      <div class="sidebar-section-label" *ngIf="shouldShowSection('food-drinks')">Food and Drinks</div>
+      <a routerLink="/food-requests" routerLinkActive="active" *ngIf="shouldShowSection('food-drinks')">
+        <i class="bi bi-egg-fried"></i> Food Requests
+      </a>
+      <a routerLink="/drink-requests" routerLinkActive="active" *ngIf="shouldShowSection('food-drinks')">
+        <i class="bi bi-cup-straw"></i> Drink Requests
+      </a>
+      <a routerLink="/guest-order" routerLinkActive="active" *ngIf="shouldShowSection('food-drinks')">
+        <i class="bi bi-cart-check"></i> Guest Order
+      </a>
+
+      <div class="sidebar-section-label" *ngIf="shouldShowSection('administration') && (canView('workers') || canView('shifts') || canView('users') || canView('roles') || canView('reports'))">Administration</div>
+      <a routerLink="/workers" routerLinkActive="active" *ngIf="canView('workers') && shouldShowSection('administration')">
+        <i class="bi bi-person-badge-fill"></i> Workers
+      </a>
+      <a routerLink="/shifts" routerLinkActive="active" *ngIf="canView('shifts') && shouldShowSection('administration')">
+        <i class="bi bi-clock-fill"></i> Work Shifts
+      </a>
+      <a routerLink="/users" routerLinkActive="active" *ngIf="canView('users') && shouldShowSection('administration')">
+        <i class="bi bi-person-gear"></i> Users
+      </a>
+      <a routerLink="/roles" routerLinkActive="active" *ngIf="canView('users') && shouldShowSection('administration')">
+        <i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions
+      </a>
+      <a routerLink="/reports" routerLinkActive="active" *ngIf="canView('reports') && shouldShowSection('administration')">
+        <i class="bi bi-bar-chart-line-fill"></i> Reports
+      </a>
+
+      <div class="sidebar-section-label" *ngIf="shouldShowSection('settings') && (canView('hotels') || canView('meals') || canView('services') || canView('settings'))">Settings</div>
+      <a routerLink="/settings/hotels" routerLinkActive="active" *ngIf="canView('hotels') && shouldShowSection('settings')">
+        <i class="bi bi-building"></i> My Hotels
+      </a>
+      <a routerLink="/settings/room-types" routerLinkActive="active" *ngIf="canView('hotels') && shouldShowSection('settings')">
+        <i class="bi bi-house-gear"></i> Room Types
+      </a>
+      <a routerLink="/settings/meals" routerLinkActive="active" *ngIf="canView('meals') && shouldShowSection('settings')">
+        <i class="bi bi-cup-hot"></i> Meals
+      </a>
+      <a routerLink="/settings/hotel-services" routerLinkActive="active" *ngIf="canView('services') && shouldShowSection('settings')">
+        <i class="bi bi-stars"></i> Hotel Services
+      </a>
+      <a routerLink="/settings/user-manual" routerLinkActive="active" *ngIf="canView('settings') && shouldShowSection('settings')">
+        <i class="bi bi-journal-text"></i> User Manual
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="user-info d-flex align-items-center gap-2 ms-auto">
+        <div class="theme-picker position-relative">
+          <button class="btn btn-outline-secondary btn-sm" (click)="showThemePicker = !showThemePicker" title="Change Theme">
+            <i class="bi bi-palette-fill"></i>
+          </button>
+          <div class="theme-dropdown" *ngIf="showThemePicker" (click)="$event.stopPropagation()">
+            <div class="theme-item" *ngFor="let t of themes" (click)="setTheme(t.key)" [class.active]="currentTheme === t.key">
+              <div class="theme-color" [style.background-color]="t.theme.primary"></div>
+              <span>{{ t.theme.name }}</span>
+            </div>
+          </div>
+        </div>
+        <a routerLink="/notifications" class="btn btn-outline-secondary btn-sm position-relative" title="Notifications">
+          <i class="bi bi-bell"></i>
+          <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+            {{ unreadCount }}
+          </span>
+        </a>
+        <!-- <span class="badge bg-primary">{{ user?.role | uppercase }}</span> -->
+        <div class="user-menu">
+          <button class="btn btn-outline-secondary btn-sm user-menu-btn" (click)="toggleUserMenu()" title="User Menu">
+            <i class="bi bi-person-circle"></i>
+            <span class="ms-1">{{ user?.fullName }}</span>
+          </button>
+          <div class="user-dropdown" *ngIf="showUserMenu" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">
+              <strong>{{ user?.fullName }}</strong>
+              <small class="text-muted d-block">{{ user?.email }}</small>
+              <span class="badge bg-primary mt-1">{{ user?.role | uppercase }}</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" routerLink="/settings/user-profile" (click)="showUserMenu = false">
+              <i class="bi bi-person me-2"></i>User Profile
+            </a>
+            <a class="dropdown-item" routerLink="/settings/change-password" (click)="showUserMenu = false">
+              <i class="bi bi-shield-lock me-2"></i>Change Password
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content-area">
+      <router-outlet />
+    </div>
+    <app-footer></app-footer>
+  </div>
+  <app-session-lock></app-session-lock>
+</div>

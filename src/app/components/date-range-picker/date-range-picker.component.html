@@ -1,0 +1,48 @@
+<div class="date-range-picker">
+  <div class="date-input" (click)="toggleCalendar()">
+    <i class="bi bi-calendar-check"></i>
+    <span>{{ displayValue }}</span>
+    <i class="bi bi-chevron-down" *ngIf="!isOpen"></i>
+    <i class="bi bi-chevron-up" *ngIf="isOpen"></i>
+  </div>
+
+  <div class="calendar-dropdown" [class.hidden]="!isOpen" (click)="$event.stopPropagation()">
+    <div class="calendar-header">
+      <button class="btn btn-sm btn-outline-secondary" (click)="previousMonth()">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <span class="calendar-title">{{ currentMonthYear }}</span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="nextMonth()">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="calendar-body">
+      <div class="calendar-weekdays">
+        <div *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">{{ day }}</div>
+      </div>
+      <div class="calendar-days">
+        <div
+          *ngFor="let day of calendarDays"
+          class="calendar-day"
+          [class.current-month]="day.isCurrentMonth"
+          [class.today]="day.isToday"
+          [class.selected]="day.isSelected"
+          [class.in-range]="day.isInRange"
+          [class.hovered]="day.isHovered"
+          [class.disabled]="isDateDisabled(day.date)"
+          (click)="!isDateDisabled(day.date) && selectDate(day.date)"
+          (mouseenter)="onDateHover(day.date)"
+        >
+          {{ day.date.getDate() }}
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-footer">
+      <button class="btn btn-sm btn-outline-danger" (click)="clearDates()">Clear</button>
+      <span *ngIf="tempCheckIn && !tempCheckOut" class="selected-info">Check-in: {{ tempCheckIn }}</span>
+      <span *ngIf="tempCheckIn && tempCheckOut" class="selected-info">{{ tempCheckIn }} - {{ tempCheckOut }}</span>
+    </div>
+  </div>
+</div>

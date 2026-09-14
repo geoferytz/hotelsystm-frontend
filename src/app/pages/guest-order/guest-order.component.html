@@ -1,0 +1,170 @@
+<div class="guest-order-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/home" class="back-arrow">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <div>
+        <h2 class="page-title mb-0">Guest Orders</h2>
+        <p class="page-subtitle mb-0">Place food and drink orders for guests</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" (click)="submitOrder()" [disabled]="selectedItems.length === 0">
+      <i class="bi bi-cart-check me-2"></i>Place Order
+    </button>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Room Selection and Menu -->
+    <div class="col-lg-8">
+      <!-- Room Selection -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-door-open me-2"></i>Select Room</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Room</label>
+              <select class="form-select" [(ngModel)]="selectedRoom" (change)="onRoomChange()">
+                <option [ngValue]="null">Select a room...</option>
+                <option *ngFor="let room of rooms" [ngValue]="room">
+                  Room {{ room.roomNumber }} - {{ room.type }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Guest Name</label>
+              <input type="text" class="form-control" [(ngModel)]="guestName" placeholder="Auto-filled from booking" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Restaurant Menu -->
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0"><i class="bi bi-menu-button me-2"></i>Restaurant Menu</h5>
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-0">
+              <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'food'" (click)="switchTab('food')">
+                  <i class="bi bi-egg-fried"></i>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'drinks'" (click)="switchTab('drinks')">
+                  <i class="bi bi-cup-straw"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3" *ngFor="let item of filteredMenu">
+              <div class="menu-item-card" (click)="addItem(item)">
+                <div class="menu-item-image">
+                  <img [src]="getImageUrl(item.imageUrl)" [alt]="item.name">
+                </div>
+                <div class="menu-item-content">
+                  <div class="menu-item-category">
+                    <span class="badge" [ngClass]="'badge-' + getCategoryColor(item.category)">
+                      <i class="bi me-1" [ngClass]="getCategoryIcon(item.category)"></i>
+                      {{ item.category | titlecase }}
+                    </span>
+                  </div>
+                  <h6 class="menu-item-name">{{ item.name }}</h6>
+                  <p class="menu-item-description text-muted small">{{ item.description }}</p>
+                  <div class="menu-item-footer">
+                    <span class="menu-item-price">{{ item.price | number }} Tsh</span>
+                    <button class="btn btn-sm btn-primary">
+                      <i class="bi bi-plus"></i> Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="restaurantMenu.length === 0" class="text-center text-muted py-4">
+            <i class="bi bi-emoji-frown fs-1"></i>
+            <p class="mt-2">No menu items available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Selected Items and Orders -->
+    <div class="col-lg-4">
+      <!-- Selected Items -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-cart me-2"></i>Selected Items</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="selectedItems.length === 0" class="text-center text-muted py-4">
+            <i class="bi bi-cart-x fs-1"></i>
+            <p class="mt-2">No items selected</p>
+          </div>
+          <div *ngFor="let item of selectedItems; let i = index" class="selected-item">
+            <div class="selected-item-info">
+              <h6 class="mb-1">{{ item.name }}</h6>
+              <small class="text-muted">{{ item.price | number }} Tsh each</small>
+            </div>
+            <div class="selected-item-controls">
+              <button class="btn btn-sm btn-outline-secondary" (click)="updateQuantity(i, -1)">
+                <i class="bi bi-dash"></i>
+              </button>
+              <span class="quantity">{{ item.quantity }}</span>
+              <button class="btn btn-sm btn-outline-secondary" (click)="updateQuantity(i, 1)">
+                <i class="bi bi-plus"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger ms-2" (click)="removeItem(i)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="selectedItems.length > 0" class="total-section">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold">Total:</span>
+              <span class="total-amount">{{ totalAmount | number }} Tsh</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <!-- <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-clock-history me-2"></i>Recent Orders</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="orders.length === 0" class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-1"></i>
+            <p class="mt-2">No orders yet</p>
+          </div>
+          <div *ngFor="let order of orders.slice(0, 5)" class="order-item">
+            <div class="order-item-header">
+              <span class="order-room">Room {{ order.Room?.roomNumber }}</span>
+              <span class="badge" [ngClass]="'badge-' + (order.status === 'delivered' ? 'success' : order.status === 'preparing' ? 'warning' : 'secondary')">
+                {{ order.status | titlecase }}
+              </span>
+            </div>
+            <div class="order-item-details">
+              <small class="text-muted">{{ order.guestName }}</small>
+              <div class="order-items">
+                <small *ngFor="let item of order.items">{{ item.name }} ({{ item.quantity }})</small>
+              </div>
+            </div>
+            <div class="order-item-footer">
+              <span class="order-amount">{{ order.totalAmount | number }} Tsh</span>
+              <small class="text-muted">{{ order.createdAt | date:'short' }}</small>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

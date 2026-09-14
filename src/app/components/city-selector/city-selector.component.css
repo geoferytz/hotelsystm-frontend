@@ -1,0 +1,87 @@
+.city-selector {
+  position: relative;
+  width: 100%;
+}
+
+.city-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.city-input:hover {
+  border-color: #008080;
+}
+
+.city-input span {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.city-input i:first-child {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.city-input i:last-child {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.city-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  z-index: 9999;
+  overflow: hidden;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.city-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.city-item:last-child {
+  border-bottom: none;
+}
+
+.city-item:hover {
+  background-color: #f5f5f5;
+}
+
+.city-item i:first-child {
+  font-size: 1.1rem;
+  color: #666;
+  width: 20px;
+}
+
+.city-item span {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.city-item i:last-child {
+  font-size: 1.1rem;
+  color: #008080;
+}

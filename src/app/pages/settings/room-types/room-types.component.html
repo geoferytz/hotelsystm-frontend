@@ -1,0 +1,49 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class="bi bi-house-gear"></i> Room Types &amp; Pricing</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">Add Room Type</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<app-shared-table
+  [columns]="roomTypeColumns"
+  [data]="items"
+  [actions]="roomTypeActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="items.length"
+  emptyMessage="No room types configured"
+  (pageChange)="changePage($event)"
+  (actionClick)="onRoomTypeTableAction($event)">
+</app-shared-table>
+
+<!-- Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="$event.stopPropagation()">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-house-gear me-2"></i>{{ editing ? 'Edit' : 'Add' }} Room Type</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="showModal = false">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label fw-semibold">Name *</label><input type="text" class="form-control" [(ngModel)]="form.name"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Base Price *</label><input type="number" class="form-control" [(ngModel)]="form.basePrice" min="0" step="0.01"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Max Occupancy</label><input type="number" class="form-control" [(ngModel)]="form.maxOccupancy" min="1"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Amenities</label><textarea class="form-control" [(ngModel)]="form.amenities" rows="2" placeholder="Wi-Fi, TV, Mini-bar..."></textarea></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea class="form-control" [(ngModel)]="form.description" rows="2"></textarea></div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="form.isActive" id="isActive">
+          <label class="form-check-label" for="isActive">Active</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+        <button class="btn btn-primary" (click)="save()">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </div>
+  </div>
+</div>

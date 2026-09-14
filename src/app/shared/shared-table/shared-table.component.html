@@ -1,0 +1,52 @@
+<div class="shared-table-card">
+  <div class="table-responsive" [class.shared-table-responsive]="responsive">
+    <table class="table mb-0" [class.table-striped]="striped" [class.table-hover]="hover">
+      <thead>
+        <tr>
+          <th *ngFor="let column of columns" [style.width]="column.width" [class.text-center]="column.align === 'center'" [class.text-end]="column.align === 'end'" [class.sortable]="column.sortable" (click)="sort(column)">
+            <span>{{ column.label }}</span>
+            <i *ngIf="column.sortable" class="bi ms-1" [ngClass]="sortKey === column.key ? (sortDirection === 'asc' ? 'bi-sort-up' : 'bi-sort-down') : 'bi-arrow-down-up'"></i>
+          </th>
+          <th *ngIf="actions.length" class="text-end action-column">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="loading">
+          <td [attr.colspan]="columns.length + (actions.length ? 1 : 0)" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+          </td>
+        </tr>
+        <tr *ngFor="let row of pagedData; trackBy: trackByRow" (click)="rowClick.emit(row)">
+          <td *ngFor="let column of columns" [class.text-center]="column.align === 'center'" [class.text-end]="column.align === 'end'">
+            <ng-container [ngSwitch]="column.type">
+              <ng-container *ngSwitchCase="'template'">
+                <ng-container *ngTemplateOutlet="column.template || null; context: { $implicit: row, value: getValue(row, column.key) }"></ng-container>
+              </ng-container>
+              <span *ngSwitchCase="'status'" class="badge" [ngClass]="'bg-' + statusClass(row, column)">{{ displayValue(row, column) }}</span>
+              <span *ngSwitchDefault>{{ displayValue(row, column) }}</span>
+            </ng-container>
+          </td>
+          <td *ngIf="actions.length" class="text-end">
+            <div class="d-flex justify-content-end gap-2">
+              <button *ngFor="let action of actions" type="button" class="btn btn-sm" [ngClass]="action.class || 'btn-outline-primary'" [disabled]="isActionDisabled(action, row)" [title]="action.label" (click)="triggerAction(action, row, $event)" [hidden]="!isActionVisible(action, row)">
+                <i *ngIf="action.icon" class="bi" [ngClass]="action.icon"></i>
+                <span *ngIf="!action.icon">{{ action.label }}</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!loading && pagedData.length === 0">
+          <td [attr.colspan]="columns.length + (actions.length ? 1 : 0)" class="text-center text-muted py-4">{{ emptyMessage }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-shared-pagination
+    *ngIf="showPagination"
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalItems]="totalCount"
+    (pageChange)="goToPage($event)">
+  </app-shared-pagination>
+</div>

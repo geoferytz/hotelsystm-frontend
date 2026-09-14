@@ -1,0 +1,270 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Billing & Invoices</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">New Invoice</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-receipt icon-spin"></i></span>
+  </button>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterStatus" (change)="loadBillings()">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="paid">Paid</option>
+      <option value="partial">Partial</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="billingColumns"
+  [data]="billings"
+  [actions]="billingActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="billings.length"
+  emptyMessage="No billing records found"
+  (pageChange)="changePage($event)"
+  (actionClick)="onBillingTableAction($event)">
+</app-shared-table>
+
+<!-- New / Edit Invoice Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="closeModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-receipt-cutoff me-2"></i>{{ editing ? 'Edit Invoice' : 'New Invoice' }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3" *ngIf="!editing">
+          <label class="form-label fw-semibold">Booking</label>
+          <select class="form-select" [(ngModel)]="form.bookingId" (change)="onBookingSelect()">
+            <option value="">Select booking...</option>
+            <option *ngFor="let bk of bookings" [value]="bk.id">
+              {{ bk.Customer?.fullName }} - Room {{ bk.Room?.roomNumber }} ({{ bk.checkIn }} to {{ bk.checkOut }})
+            </option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Total Amount</label>
+            <input type="number" class="form-control" [(ngModel)]="form.totalAmount" step="0.01">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Paid Amount</label>
+            <input type="number" class="form-control" [(ngModel)]="form.paidAmount" step="0.01">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Payment Method</label>
+          <select class="form-select" [(ngModel)]="form.paymentMethod">
+            <option value="">Select...</option>
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+            <option value="transfer">Bank Transfer</option>
+            <option value="mobile">Mobile Money</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea class="form-control" [(ngModel)]="form.notes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveBilling()">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+
+<!-- ── Bill Details Modal ──────────────────────────────────────────────────── -->
+<div class="modal fade" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'" tabindex="-1" (click)="closeDetailsModal()">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable" (click)="$event.stopPropagation()">
+    <div class="modal-content" *ngIf="selectedBilling">
+
+      <!-- Header -->
+      <div class="modal-header invoice-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <h5 class="modal-title mb-0 text-white"><i class="bi bi-receipt me-2"></i>Invoice #{{ selectedBilling.id }}</h5>
+          <span class="badge" [ngClass]="'badge-' + selectedBilling.paymentStatus" style="font-size:13px;padding:6px 14px">
+            {{ selectedBilling.paymentStatus | uppercase }}
+          </span>
+        </div>
+        <button type="button" class="close-circle" (click)="closeDetailsModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body p-4">
+
+        <!-- Guest & Stay Info -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="invoice-card">
+              <div class="invoice-card-title"><i class="bi bi-person-fill me-1"></i> Guest Information</div>
+              <div class="invoice-info-row"><span>Name</span><strong>{{ selectedBilling.Customer?.fullName || '-' }}</strong></div>
+              <div class="invoice-info-row"><span>Phone</span><strong>{{ selectedBilling.Customer?.phone || '-' }}</strong></div>
+              <div class="invoice-info-row"><span>Email</span><strong>{{ selectedBilling.Customer?.email || '-' }}</strong></div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="invoice-card">
+              <div class="invoice-card-title"><i class="bi bi-building me-1"></i> Stay Details</div>
+              <div class="invoice-info-row"><span>Room</span><strong>{{ selectedBilling.Booking?.Room?.roomNumber || '-' }} ({{ selectedBilling.Booking?.Room?.type || '-' }})</strong></div>
+              <div class="invoice-info-row"><span>Check-In</span><strong>{{ selectedBilling.Booking?.checkIn | date:'mediumDate' }}</strong></div>
+              <div class="invoice-info-row"><span>Check-Out</span><strong>{{ selectedBilling.Booking?.checkOut | date:'mediumDate' }}</strong></div>
+              <div class="invoice-info-row"><span>Nights</span><strong>{{ getNights(selectedBilling) }}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charges Breakdown -->
+        <div class="invoice-section-title"><i class="bi bi-list-ul me-1"></i> Charges Breakdown</div>
+        <table class="table table-bordered mb-0">
+          <thead class="invoice-table-head">
+            <tr>
+              <th>Description</th>
+              <th class="text-center">Qty</th>
+              <th class="text-end">Unit Price</th>
+              <th class="text-end">Amount</th>
+              <th class="text-center" style="width:50px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Room base charge -->
+            <tr>
+              <td><i class="bi bi-door-open me-1 text-muted"></i> Room Charge – {{ selectedBilling.Booking?.Room?.roomNumber || '-' }}</td>
+              <td class="text-center">{{ getNights(selectedBilling) }} nights</td>
+              <td class="text-end">{{ selectedBilling.Booking?.Room?.price | number }} Tsh</td>
+              <td class="text-end fw-semibold">{{ getRoomBase() | number }} Tsh</td>
+              <td></td>
+            </tr>
+            <!-- Extra charges -->
+            <tr *ngFor="let charge of selectedBilling.extraCharges; let ci = index" class="extra-charge-row">
+              <td>
+                <i class="bi me-1" [ngClass]="getChargeIcon(charge.type)"></i> {{ charge.name }}
+                <span *ngIf="charge.type" class="badge ms-2" [ngClass]="'badge-' + getChargeBadgeClass(charge.type)" style="font-size: 10px;">{{ charge.type | titlecase }}</span>
+                <span *ngIf="charge.autoAdded" class="badge ms-1 bg-secondary" style="font-size: 9px;">Auto</span>
+              </td>
+              <td class="text-center">{{ charge.quantity }}</td>
+              <td class="text-end">{{ charge.price | number }} Tsh</td>
+              <td class="text-end fw-semibold">{{ charge.subtotal | number }} Tsh</td>
+              <td class="text-center">
+                <button *ngIf="!charge.autoAdded" class="btn btn-sm btn-link text-danger p-0" (click)="removeExtraCharge(ci)" title="Remove"><i class="bi bi-x-circle"></i></button>
+                <span *ngIf="charge.autoAdded" class="text-muted" style="font-size: 12px;"><i class="bi bi-database"></i></span>
+              </td>
+            </tr>
+            <tr *ngIf="selectedBilling.extraCharges?.length === 0">
+              <td colspan="5" class="text-center text-muted fst-italic py-2">No extra charges</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="table-light">
+              <td colspan="3" class="text-end fw-bold">Total Amount</td>
+              <td class="text-end fw-bold text-success fs-6">{{ selectedBilling.totalAmount | number }} Tsh</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3" class="text-end">Paid Amount</td>
+              <td class="text-end fw-semibold text-primary">{{ selectedBilling.paidAmount | number }} Tsh</td>
+              <td></td>
+            </tr>
+            <tr [class.table-danger]="getBalance() > 0" [class.table-success]="getBalance() <= 0">
+              <td colspan="3" class="text-end fw-bold">Balance Due</td>
+              <td class="text-end fw-bold">{{ getBalance() | number }} Tsh</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Payment Info -->
+        <div class="row g-3 mt-3">
+          <div class="col-md-6">
+            <div class="invoice-card">
+              <div class="invoice-card-title"><i class="bi bi-credit-card me-1"></i> Payment</div>
+              <div class="invoice-info-row"><span>Method</span><strong>{{ selectedBilling.paymentMethod || '-' }}</strong></div>
+              <div class="invoice-info-row"><span>Status</span>
+                <span class="badge" [ngClass]="'badge-' + selectedBilling.paymentStatus">{{ selectedBilling.paymentStatus }}</span>
+              </div>
+              <div class="invoice-info-row" *ngIf="selectedBilling.notes"><span>Notes</span><strong>{{ selectedBilling.notes }}</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Extra Charge -->
+        <hr class="my-4">
+        <div class="invoice-section-title"><i class="bi bi-plus-lg me-1"></i> Add Extra Charge</div>
+        <div class="extra-charge-form">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Select Service</label>
+              <select class="form-select form-select-sm" [(ngModel)]="extraChargeForm.serviceId" (change)="onServiceSelect()">
+                <option value="">-- Select from hotel services --</option>
+                <option *ngFor="let svc of hotelServices" [value]="svc.id">{{ svc.name }} ({{ svc.price | number }} Tsh)</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Name</label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="extraChargeForm.customName" placeholder="e.g. Laundry, Drinks...">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-semibold">Price (Tsh)</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="extraChargeForm.price" min="0">
+            </div>
+            <div class="col-md-1">
+              <label class="form-label fw-semibold">Qty</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="extraChargeForm.quantity" min="1">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-success btn-sm w-100" (click)="addExtraCharge()">
+                <i class="bi bi-plus-lg me-1"></i> Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer with Print & WhatsApp -->
+      <div class="modal-footer d-flex justify-content-end">
+        <div class="d-flex gap-2">
+          <button class="btn btn-success" (click)="shareWhatsApp()">
+            <i class="bi bi-whatsapp me-1"></i> Share via WhatsApp
+          </button>
+          <button class="btn btn-primary" (click)="printInvoice()">
+            <i class="bi bi-printer me-1"></i> Print Invoice
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showDetailsModal"></div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" [class.show]="showDeleteModal" [style.display]="showDeleteModal ? 'block' : 'none'" tabindex="-1" (click)="cancelDelete()">
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="cancelDelete()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0">Are you sure you want to delete this billing record? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()"><i class="bi bi-trash me-1"></i> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showDeleteModal"></div>

@@ -1,0 +1,130 @@
+<div class="booking-container">
+  <div *ngIf="!success" class="booking-content">
+    <!-- Header -->
+    <div class="booking-header">
+      <div class="header-content">
+        <h1>Book Your Stay</h1>
+        <p>{{ hotel?.name }} - Room {{ room?.roomNumber }}</p>
+      </div>
+    </div>
+
+    <div class="booking-body">
+      <!-- Back Button -->
+      <div class="back-btn-bar">
+        <button class="booking-back-btn" (click)="goBack()">
+          <span class="back-circle"><i class="bi bi-arrow-left"></i></span>
+          <span>Back to Hotel</span>
+        </button>
+      </div>
+      <!-- Room Summary -->
+      <div class="room-summary">
+        <div class="summary-card">
+          <h3>Room Details</h3>
+          <div *ngIf="room?.imageUrl" class="room-image-container">
+            <img [src]="normalizeImageUrl(room?.imageUrl)" [alt]="'Room ' + (room?.roomNumber || '')" class="room-image">
+          </div>
+          <div class="room-info">
+            <div class="info-row">
+              <span>Room Number:</span>
+              <strong>{{ room?.roomNumber }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Type:</span>
+              <strong>{{ room?.type }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Floor:</span>
+              <strong>{{ room?.floor }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Price per Night:</span>
+              <strong>{{ room?.price?.toLocaleString() }} Tsh</strong>
+            </div>
+            <p class="room-desc">{{ room?.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Form -->
+      <div class="booking-form">
+        <div class="form-card">
+          <h3>Guest Information</h3>
+          <form (ngSubmit)="submitBooking()">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" class="form-control" [(ngModel)]="bookingForm.fullName" name="fullName" required>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" class="form-control" [(ngModel)]="bookingForm.email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" class="form-control" [(ngModel)]="bookingForm.phone" name="phone" required>
+            </div>
+
+            <h3>Stay Details</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Check-in Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="bookingForm.checkIn" name="checkIn" [min]="minDate" [max]="maxDate" required>
+              </div>
+              <div class="form-group">
+                <label>Check-out Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="bookingForm.checkOut" name="checkOut" [min]="minDate" [max]="maxDate" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Adults *</label>
+                <input type="number" class="form-control" [(ngModel)]="bookingForm.adults" name="adults" min="1" required>
+              </div>
+              <div class="form-group">
+                <label>Children</label>
+                <input type="number" class="form-control" [(ngModel)]="bookingForm.children" name="children" min="0">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Special Requests</label>
+              <textarea class="form-control" [(ngModel)]="bookingForm.specialRequests" name="specialRequests" rows="3"></textarea>
+            </div>
+
+            <!-- Total -->
+            <div class="total-section">
+              <div class="total-row">
+                <span>Total Amount:</span>
+                <strong>{{ calculateTotal().toLocaleString() }} Tsh</strong>
+              </div>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="submitting || !isFormValid()">
+              <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+              {{ submitting ? 'Processing...' : 'Confirm Booking' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="success" class="success-container">
+    <div class="success-card">
+      <div class="success-icon">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <h1>Booking Confirmed!</h1>
+      <p>Your booking has been successfully created. You will receive a confirmation email shortly.</p>
+      <div class="success-details">
+        <p><strong>Hotel:</strong> {{ hotel?.name }}</p>
+        <p><strong>Room:</strong> {{ room?.roomNumber }}</p>
+        <p><strong>Check-in:</strong> {{ bookingForm.checkIn }}</p>
+        <p><strong>Check-out:</strong> {{ bookingForm.checkOut }}</p>
+        <p><strong>Total:</strong> {{ calculateTotal().toLocaleString() }} Tsh</p>
+      </div>
+      <button class="btn btn-primary" (click)="goToHotels()">Browse More Hotels</button>
+    </div>
+  </div>
+</div>

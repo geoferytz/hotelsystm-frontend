@@ -1,0 +1,242 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> Financial Reports</h3>
+  <button class="btn btn-outline-primary" (click)="loadFinancialSummary()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+</div>
+
+<!-- Tabs -->
+<div class="tabs-wrapper">
+  <button class="tab-btn" [class.active]="activeTab === 'summary'" (click)="switchTab('summary')">
+    <i class="bi bi-speedometer2"></i> Summary
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'expenses'" (click)="switchTab('expenses')">
+    <i class="bi bi-wallet2"></i> Expenses
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'refunds'" (click)="switchTab('refunds')">
+    <i class="bi bi-arrow-counterclockwise"></i> Refunds
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'profit-loss'" (click)="switchTab('profit-loss')">
+    <i class="bi bi-graph-up-arrow"></i> Profit/Loss
+  </button>
+</div>
+
+<!-- Summary Tab -->
+<div *ngIf="activeTab === 'summary'" class="tab-content">
+  <div class="summary-cards">
+    <div class="summary-card revenue">
+      <div class="card-icon"><i class="bi bi-currency-dollar"></i></div>
+      <div class="card-info">
+        <label>Total Revenue</label>
+        <strong>{{ summary.totalRevenue | number }}</strong>
+      </div>
+    </div>
+    <div class="summary-card outstanding">
+      <div class="card-icon"><i class="bi bi-clock"></i></div>
+      <div class="card-info">
+        <label>Outstanding</label>
+        <strong>{{ summary.totalOutstanding | number }}</strong>
+      </div>
+    </div>
+    <div class="summary-card expenses">
+      <div class="card-icon"><i class="bi bi-wallet2"></i></div>
+      <div class="card-info">
+        <label>Total Expenses</label>
+        <strong>{{ summary.totalExpenses | number }}</strong>
+      </div>
+    </div>
+    <div class="summary-card refunds">
+      <div class="card-icon"><i class="bi bi-arrow-counterclockwise"></i></div>
+      <div class="card-info">
+        <label>Total Refunds</label>
+        <strong>{{ summary.totalRefunds | number }}</strong>
+      </div>
+    </div>
+    <div class="summary-card profit">
+      <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <div class="card-info">
+        <label>Net Profit</label>
+        <strong>{{ summary.profit | number }}</strong>
+      </div>
+    </div>
+    <div class="summary-card bookings">
+      <div class="card-icon"><i class="bi bi-calendar-check"></i></div>
+      <div class="card-info">
+        <label>Active Bookings</label>
+        <strong>{{ summary.activeBookings }} / {{ summary.totalBookings }}</strong>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="info-card">
+        <h5><i class="bi bi-exclamation-circle"></i> Pending Actions</h5>
+        <div class="pending-item">
+          <span>Pending Expenses</span>
+          <strong class="badge bg-warning">{{ summary.pendingExpenses }}</strong>
+        </div>
+        <div class="pending-item">
+          <span>Pending Refunds</span>
+          <strong class="badge bg-warning">{{ summary.pendingRefunds }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Expenses Tab -->
+<div *ngIf="activeTab === 'expenses'" class="tab-content">
+  <div class="filter-bar">
+    <input type="date" class="form-control" [(ngModel)]="expenseFilter.startDate" placeholder="Start Date">
+    <input type="date" class="form-control" [(ngModel)]="expenseFilter.endDate" placeholder="End Date">
+    <select class="form-select" [(ngModel)]="expenseFilter.category">
+      <option value="">All Categories</option>
+      <option value="supplies">Supplies</option>
+      <option value="maintenance">Maintenance</option>
+      <option value="utilities">Utilities</option>
+      <option value="salaries">Salaries</option>
+      <option value="marketing">Marketing</option>
+      <option value="other">Other</option>
+    </select>
+    <select class="form-select" [(ngModel)]="expenseFilter.status">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-primary" (click)="loadExpenseReport()"><i class="bi bi-search"></i> Generate</button>
+  </div>
+
+  <div *ngIf="expenseReport.totalExpenses !== undefined" class="report-results">
+    <div class="summary-cards">
+      <div class="summary-card">
+        <label>Total Expenses</label>
+        <strong>{{ expenseReport.totalExpenses | number }}</strong>
+      </div>
+      <div class="summary-card">
+        <label>Count</label>
+        <strong>{{ expenseReport.count }}</strong>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="info-card">
+          <h5>By Category</h5>
+          <div *ngFor="let item of expenseReport.expensesByCategory" class="category-bar">
+            <span>{{ item.category | titlecase }}</span>
+            <div class="bar-container">
+              <div class="bar-fill" [style.width.%]="(item.total / expenseReport.totalExpenses * 100)" [style.background-color]="getCategoryColor(item.category)"></div>
+            </div>
+            <strong>{{ item.total | number }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-card">
+          <h5>By Status</h5>
+          <div *ngFor="let item of expenseReport.expensesByStatus" class="status-item">
+            <span>{{ item.status | titlecase }}</span>
+            <span class="badge" [style.background-color]="getStatusColor(item.status)">{{ item.count }}</span>
+            <strong>{{ item.total | number }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Refunds Tab -->
+<div *ngIf="activeTab === 'refunds'" class="tab-content">
+  <div class="filter-bar">
+    <input type="date" class="form-control" [(ngModel)]="refundFilter.startDate" placeholder="Start Date">
+    <input type="date" class="form-control" [(ngModel)]="refundFilter.endDate" placeholder="End Date">
+    <select class="form-select" [(ngModel)]="refundFilter.status">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+      <option value="processed">Processed</option>
+    </select>
+    <button class="btn btn-primary" (click)="loadRefundReport()"><i class="bi bi-search"></i> Generate</button>
+  </div>
+
+  <div *ngIf="refundReport.totalRefunds !== undefined" class="report-results">
+    <div class="summary-cards">
+      <div class="summary-card">
+        <label>Total Refunds</label>
+        <strong>{{ refundReport.totalRefunds | number }}</strong>
+      </div>
+      <div class="summary-card">
+        <label>Count</label>
+        <strong>{{ refundReport.count }}</strong>
+      </div>
+    </div>
+
+    <div class="info-card mt-4">
+      <h5>By Status</h5>
+      <div *ngFor="let item of refundReport.refundsByStatus" class="status-item">
+        <span>{{ item.status | titlecase }}</span>
+        <span class="badge" [style.background-color]="getStatusColor(item.status)">{{ item.count }}</span>
+        <strong>{{ item.total | number }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profit/Loss Tab -->
+<div *ngIf="activeTab === 'profit-loss'" class="tab-content">
+  <div class="filter-bar">
+    <input type="date" class="form-control" [(ngModel)]="profitLossFilter.startDate" placeholder="Start Date">
+    <input type="date" class="form-control" [(ngModel)]="profitLossFilter.endDate" placeholder="End Date">
+    <button class="btn btn-primary" (click)="loadProfitLossReport()"><i class="bi bi-search"></i> Generate</button>
+  </div>
+
+  <div *ngIf="profitLoss.totalRevenue !== undefined" class="report-results">
+    <div class="summary-cards">
+      <div class="summary-card revenue">
+        <label>Total Revenue</label>
+        <strong>{{ profitLoss.totalRevenue | number }}</strong>
+      </div>
+      <div class="summary-card refunds">
+        <label>Total Refunds</label>
+        <strong>{{ profitLoss.totalRefunds | number }}</strong>
+      </div>
+      <div class="summary-card">
+        <label>Net Revenue</label>
+        <strong>{{ profitLoss.netRevenue | number }}</strong>
+      </div>
+      <div class="summary-card expenses">
+        <label>Total Expenses</label>
+        <strong>{{ profitLoss.totalExpenses | number }}</strong>
+      </div>
+      <div class="summary-card profit">
+        <label>Profit</label>
+        <strong>{{ profitLoss.profit | number }}</strong>
+      </div>
+      <div class="summary-card">
+        <label>Profit Margin</label>
+        <strong>{{ profitLoss.profitMargin }}%</strong>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="info-card">
+          <h5>Expenses by Category</h5>
+          <div *ngFor="let item of profitLoss.expensesByCategory" class="category-bar">
+            <span>{{ item.category | titlecase }}</span>
+            <div class="bar-container">
+              <div class="bar-fill" [style.width.%]="(item.total / profitLoss.totalExpenses * 100)" [style.background-color]="getCategoryColor(item.category)"></div>
+            </div>
+            <strong>{{ item.total | number }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div *ngIf="loading" class="loading-overlay">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>

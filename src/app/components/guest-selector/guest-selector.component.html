@@ -1,0 +1,49 @@
+<div class="guest-selector">
+  <div class="guest-input" (click)="toggleDropdown()">
+    <i class="bi bi-people"></i>
+    <span>{{ displayValue }}</span>
+    <i class="bi bi-chevron-down" *ngIf="!isOpen"></i>
+    <i class="bi bi-chevron-up" *ngIf="isOpen"></i>
+  </div>
+
+  <div *ngIf="isOpen" class="guest-dropdown" (click)="$event.stopPropagation()">
+    <div class="guest-section">
+      <div class="guest-info">
+        <span class="guest-label">Adults</span>
+        <span class="guest-age">Ages 13 or above</span>
+      </div>
+      <div class="guest-controls">
+        <button class="btn btn-sm btn-outline-secondary" (click)="decrementAdults()" [disabled]="tempAdults <= 1">-</button>
+        <span class="guest-count">{{ tempAdults }}</span>
+        <button class="btn btn-sm btn-outline-secondary" (click)="incrementAdults()" [disabled]="tempAdults >= 10">+</button>
+      </div>
+    </div>
+
+    <div class="guest-section">
+      <div class="guest-info">
+        <span class="guest-label">Children</span>
+        <span class="guest-age">Ages 0-12</span>
+      </div>
+      <div class="guest-controls">
+        <button class="btn btn-sm btn-outline-secondary" (click)="decrementChildren()" [disabled]="tempChildren <= 0">-</button>
+        <span class="guest-count">{{ tempChildren }}</span>
+        <button class="btn btn-sm btn-outline-secondary" (click)="incrementChildren()" [disabled]="tempChildren >= 10">+</button>
+      </div>
+    </div>
+
+    <div class="guest-section">
+      <div class="guest-info">
+        <span class="guest-label">Rooms</span>
+      </div>
+      <div class="guest-controls">
+        <button class="btn btn-sm btn-outline-secondary" (click)="decrementRooms()" [disabled]="tempRooms <= 1">-</button>
+        <span class="guest-count">{{ tempRooms }}</span>
+        <button class="btn btn-sm btn-outline-secondary" (click)="incrementRooms()" [disabled]="tempRooms >= 10">+</button>
+      </div>
+    </div>
+
+    <div class="guest-footer">
+      <button class="btn btn-primary btn-sm" (click)="apply()">Apply</button>
+    </div>
+  </div>
+</div>

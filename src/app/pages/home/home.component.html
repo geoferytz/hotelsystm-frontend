@@ -1,0 +1,115 @@
+<div class="home-page">
+  <!-- Header -->
+  <header class="home-header">
+    <div class="header-left">
+      <img src="assets/images/NABOO.png" alt="NABOO Logo" class="header-logo-img">
+      <div>
+        <span class="header-subtitle">| Hotel Management System</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="theme-picker position-relative">
+        <button class="btn btn-outline-secondary btn-sm" (click)="showThemePicker = !showThemePicker" title="Change Theme">
+          <i class="bi bi-palette-fill"></i>
+        </button>
+        <div class="theme-dropdown" *ngIf="showThemePicker" (click)="$event.stopPropagation()">
+          <div class="theme-item" *ngFor="let t of themes" (click)="setTheme(t.key)" [class.active]="currentTheme === t.key">
+            <div class="theme-color" [style.background-color]="t.theme.primary"></div>
+            <span>{{ t.theme.name }}</span>
+          </div>
+        </div>
+      </div>
+      <a routerLink="/notifications" class="btn btn-outline-secondary btn-sm position-relative" title="Notifications">
+        <i class="bi bi-bell"></i>
+        <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+          {{ unreadCount }}
+        </span>
+      </a>
+      <!-- <span class="badge bg-primary">{{ user?.role | uppercase }}</span> -->
+      <div class="user-menu">
+        <button class="btn btn-outline-secondary btn-sm user-menu-btn" (click)="toggleUserMenu()" title="User Menu">
+          <i class="bi bi-person-circle"></i>
+          <span class="ms-1">{{ user?.fullName }}</span>
+        </button>
+        <div class="user-dropdown" *ngIf="showUserMenu" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <strong>{{ user?.fullName }}</strong>
+            <small class="text-muted d-block">{{ user?.email }}</small>
+            <span class="badge bg-primary mt-1">{{ user?.role | uppercase }}</span>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" routerLink="/settings/user-profile" (click)="showUserMenu = false">
+            <i class="bi bi-person me-2"></i>User Profile
+          </a>
+          <a class="dropdown-item" routerLink="/settings/change-password" (click)="showUserMenu = false">
+            <i class="bi bi-shield-lock me-2"></i>Change Password
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-danger" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-2"></i>Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="home-main">
+    <div class="home-container">
+      <!-- Welcome Banner -->
+      <!-- <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>{{ greeting }}, <span class="user-name">{{ user?.fullName }}</span></h2>
+          <p>Welcome to the Hotel Management System. Select a module to get started.</p>
+        </div>
+        <div class="welcome-icon">
+          <i class="bi bi-building"></i>
+        </div>
+      </div> -->
+
+      <!-- Quick Stats Bar -->
+      <div class="quick-stats">
+        <div class="stat-pill">
+          <i class="bi bi-person-badge-fill"></i>
+          <span>Role: <strong>{{ user?.role | uppercase }}</strong></span>
+        </div>
+        <div class="stat-pill">
+          <i class="bi bi-clock"></i>
+          <span>{{ today | date:'EEEE, MMMM d, y' }}</span>
+        </div>
+      </div>
+
+      <!-- Module Tiles -->
+      <div class="tiles-grid">
+        <div
+          class="module-tile"
+          *ngFor="let tile of tiles"
+          [class.hidden-tile]="!canViewTile(tile)"
+          (click)="canViewTile(tile) && navigateTo(tile.route, tile.category)"
+        >
+          <div class="tile-icon-wrapper" [style.background]="tile.gradient">
+            <i class="bi {{ tile.icon }}"></i>
+          </div>
+          <div class="tile-body">
+            <h3>{{ tile.title }}</h3>
+            <p>{{ tile.description }}</p>
+            <div class="tile-links" *ngIf="tile.children">
+              <a
+                *ngFor="let child of tile.children"
+                (click)="$event.stopPropagation(); navigateTo(child.route)"
+              >
+                <i class="bi bi-chevron-right"></i> {{ child.label }}
+              </a>
+            </div>
+          </div>
+          <div class="tile-arrow">
+            <i class="bi bi-arrow-right-circle"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

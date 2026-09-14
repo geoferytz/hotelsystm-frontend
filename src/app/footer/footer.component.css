@@ -1,0 +1,43 @@
+.app-footer {
+  background: var(--white);
+  border-top: 1px solid var(--border-color);
+  padding: 0.75rem 1.75rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-brand {
+  font-weight: 700;
+  color: var(--royal-green-dark);
+  font-size: 0.85rem;
+}
+
+.footer-separator {
+  color: var(--border-color);
+  margin: 0 0.25rem;
+}
+
+.footer-text {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.footer-left i {
+  color: var(--royal-green);
+  font-size: 0.95rem;
+}

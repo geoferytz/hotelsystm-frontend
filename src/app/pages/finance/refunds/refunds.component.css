@@ -1,0 +1,166 @@
+@import '../finance-submodule.css';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h3 {
+  margin: 0;
+  color: var(--royal-green-dark);
+}
+
+.table-filters {
+  margin-bottom: 1rem;
+}
+
+.table-filters .form-select {
+  max-width: 200px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pagination-controls .btn {
+  min-width: 36px;
+}
+
+.pagination-controls .btn.active {
+  background-color: var(--royal-green);
+  border-color: var(--royal-green);
+  color: var(--white);
+}
+
+.detail-card {
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--off-white);
+}
+
+.detail-card label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.detail-card strong,
+.detail-card p {
+  margin: 0;
+  color: var(--text-dark);
+}
+
+.detail-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  border-radius: var(--radius);
+  border: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+}
+
+.modal-header-animated {
+  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #2d7a45 100%);
+  color: white;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.modal-header-animated .modal-title {
+  color: white;
+}
+
+.modal-title {
+  color: var(--royal-green-dark);
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: 1.25rem;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.btn-close-animated {
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  animation: closePulse 2s ease-in-out infinite;
+  opacity: 1;
+}
+
+.btn-close-animated i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.btn-close-animated:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+@keyframes closePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+.badge {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+}

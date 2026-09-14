@@ -1,0 +1,27 @@
+<div class="page-header">
+  <h3><a routerLink="/finance" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class="bi bi-cash-stack"></i> Cashier & Shift Management</h3>
+</div>
+
+<div class="finance-submodule-hero">
+  <span>Finance Module</span>
+  <h2>Track cashiers and shift cash balances</h2>
+  <p>Track cashiers per shift, record opening and closing cash balances, and detect shortages or overages for accurate cash management.</p>
+</div>
+
+<div class="finance-feature-grid">
+  <div class="finance-feature-card" *ngFor="let feature of features">
+    <div class="feature-icon"><i class="bi" [ngClass]="feature.icon"></i></div>
+    <h5>{{ feature.title }}</h5>
+    <p>{{ feature.text }}</p>
+  </div>
+</div>
+
+<div class="finance-card mt-3">
+  <h5><i class="bi bi-list-check"></i> Cashier Shift Workflow</h5>
+  <div class="workflow-list">
+    <div><strong>1. Assign Cashier</strong><span>Assign a cashier to a specific shift.</span></div>
+    <div><strong>2. Record Opening Balance</strong><span>Cashier records starting cash amount at shift start.</span></div>
+    <div><strong>3. Track Transactions</strong><span>System tracks cash transactions during the shift.</span></div>
+    <div><strong>4. Close Shift</strong><span>Record closing balance and compare with expected.</span></div>
+  </div>
+</div>

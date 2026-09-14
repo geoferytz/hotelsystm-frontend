@@ -1,0 +1,252 @@
+<div class="rd-container">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="rd-loading">
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="rd-error">
+    <i class="bi bi-exclamation-circle"></i>
+    <p>{{ error }}</p>
+    <button class="rd-back-btn" (click)="goBack()">
+      <span class="rd-back-circle"><i class="bi bi-arrow-left"></i></span>
+      Back to Hotel
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && room" class="rd-content">
+
+    <!-- Hero Banner -->
+    <header class="rd-hero">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <span class="rd-hotel-name">{{ hotel?.name }}</span>
+            <h1 class="rd-title">Room {{ room.roomNumber }}</h1>
+            <div class="rd-hero-badges">
+              <span class="rd-type-badge">{{ room.type | titlecase }}</span>
+              <span class="rd-floor-badge"><i class="bi bi-layers"></i> Floor {{ room.floor }}</span>
+              <span class="rd-status-badge" [ngClass]="'status-' + room.status">
+                <i class="bi bi-circle-fill"></i> {{ statusLabel }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button class="btn btn-outline-light" (click)="goBack()"><i class="bi bi-arrow-left"></i> Back</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="rd-body">
+
+      <!-- LEFT: Image Panel -->
+      <div class="rd-image-panel">
+        <div class="rd-main-image">
+          <img *ngIf="activeImage" [src]="activeImage" [alt]="'Room ' + room.roomNumber" class="rd-img">
+          <button type="button" class="rd-slider-btn rd-slider-prev" *ngIf="galleryImages.length > 1" (click)="previousImage()" aria-label="Previous image">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button type="button" class="rd-slider-btn rd-slider-next" *ngIf="galleryImages.length > 1" (click)="nextImage()" aria-label="Next image">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <div *ngIf="!activeImage" class="rd-no-image">
+            <i class="bi bi-image"></i>
+            <span>No Image Available</span>
+          </div>
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="rd-thumbnails" *ngIf="galleryImages.length > 1">
+          <div
+            *ngFor="let img of galleryImages; let i = index"
+            class="rd-thumb"
+            [class.rd-thumb-active]="img === activeImage"
+            (click)="setActiveImage(img)"
+          >
+            <img [src]="img" [alt]="'Room image ' + (i + 1)">
+          </div>
+        </div>
+
+        <!-- Image counter -->
+        <div class="rd-img-counter" *ngIf="galleryImages.length > 1">
+          <i class="bi bi-images"></i> {{ galleryImages.indexOf(activeImage) + 1 }} / {{ galleryImages.length }}
+        </div>
+      </div>
+
+      <!-- RIGHT: Details Panel -->
+      <div class="rd-details-panel">
+
+        <!-- Price Card -->
+        <div class="rd-price-card">
+          <div class="rd-price-main">
+            <span class="rd-price-amount">{{ room.price?.toLocaleString() }} <span class="rd-currency">Tsh</span></span>
+            <span class="rd-price-per">per night</span>
+          </div>
+          <div *ngIf="nightCount > 0" class="rd-price-total">
+            <span>{{ nightCount }} night{{ nightCount > 1 ? 's' : '' }}</span>
+            <strong>{{ totalPrice.toLocaleString() }} Tsh total</strong>
+          </div>
+        </div>
+
+        <!-- Room Stats -->
+        <div class="rd-stats">
+          <div class="rd-stat">
+            <span class="rd-stat-icon"><i class="bi bi-door-open"></i></span>
+            <div>
+              <small>Room Type</small>
+              <strong>{{ room.type | titlecase }}</strong>
+            </div>
+          </div>
+          <div class="rd-stat">
+            <span class="rd-stat-icon"><i class="bi bi-layers"></i></span>
+            <div>
+              <small>Floor</small>
+              <strong>Floor {{ room.floor }}</strong>
+            </div>
+          </div>
+          <div class="rd-stat">
+            <span class="rd-stat-icon"><i class="bi bi-people"></i></span>
+            <div>
+              <small>Guests</small>
+              <strong>{{ adults }} Adults{{ children > 0 ? ', ' + children + ' Children' : '' }}</strong>
+            </div>
+          </div>
+          <div class="rd-stat" *ngIf="checkIn">
+            <span class="rd-stat-icon"><i class="bi bi-calendar-check"></i></span>
+            <div>
+              <small>Check-in</small>
+              <strong>{{ checkIn }}</strong>
+            </div>
+          </div>
+          <div class="rd-stat" *ngIf="checkOut">
+            <span class="rd-stat-icon"><i class="bi bi-calendar-x"></i></span>
+            <div>
+              <small>Check-out</small>
+              <strong>{{ checkOut }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="rd-description" *ngIf="room.description">
+          <h4><i class="bi bi-info-circle"></i> About This Room</h4>
+          <p>{{ room.description }}</p>
+        </div>
+
+        <!-- Hotel Info Strip -->
+        <div class="rd-hotel-strip" *ngIf="hotel">
+          <i class="bi bi-building"></i>
+          <div>
+            <strong>{{ hotel.name }}</strong>
+            <small>{{ hotel.city }}, {{ hotel.country }}</small>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="rd-cta">
+          <button class="rd-book-btn" (click)="bookRoom()" [disabled]="!isAvailable">
+            <i class="bi bi-calendar-plus"></i>
+            {{ isAvailable ? 'Book This Room' : 'Not Available' }}
+          </button>
+          <p *ngIf="!isAvailable" class="rd-unavailable-note">
+            <i class="bi bi-info-circle"></i> This room is currently {{ statusLabel | lowercase }}.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal Overlay -->
+<div class="bm-overlay" *ngIf="showBookingModal" (click)="closeBookingModal()"></div>
+
+<div class="bm-modal" *ngIf="showBookingModal">
+  <button class="bm-close" (click)="closeBookingModal()"><i class="bi bi-x-lg"></i></button>
+
+  <!-- Success State -->
+  <div *ngIf="bookingSuccess" class="bm-success">
+    <div class="bm-success-icon"><i class="bi bi-check-circle-fill"></i></div>
+    <h2>Booking Confirmed!</h2>
+    <p>Your booking for <strong>Room {{ room?.roomNumber }}</strong> at <strong>{{ hotel?.name }}</strong> has been created successfully.</p>
+    <div class="bm-success-details">
+      <div class="bm-detail-row"><span>Check-in</span><strong>{{ bookingForm.checkIn }}</strong></div>
+      <div class="bm-detail-row"><span>Check-out</span><strong>{{ bookingForm.checkOut }}</strong></div>
+      <div class="bm-detail-row"><span>Total</span><strong>{{ calculateTotal().toLocaleString() }} Tsh</strong></div>
+    </div>
+    <button class="bm-done-btn" (click)="closeBookingModal()">Done</button>
+  </div>
+
+  <!-- Form State -->
+  <div *ngIf="!bookingSuccess" class="bm-form-wrap">
+    <div class="bm-header">
+      <div class="bm-header-icon"><i class="bi bi-calendar-plus"></i></div>
+      <div>
+        <h2>Book Your Stay</h2>
+        <p>{{ hotel?.name }} &mdash; Room {{ room?.roomNumber }} &bull; {{ room?.type | titlecase }}</p>
+      </div>
+    </div>
+
+    <form (ngSubmit)="submitBooking()" class="bm-form">
+      <div class="bm-section-title">Guest Information</div>
+      <div class="bm-field">
+        <label>Full Name *</label>
+        <input type="text" class="bm-input" [(ngModel)]="bookingForm.fullName" name="fullName" placeholder="John Doe" required>
+      </div>
+      <div class="bm-row">
+        <div class="bm-field">
+          <label>Email *</label>
+          <input type="email" class="bm-input" [(ngModel)]="bookingForm.email" name="email" placeholder="you@email.com" required>
+        </div>
+        <div class="bm-field">
+          <label>Phone *</label>
+          <input type="tel" class="bm-input" [(ngModel)]="bookingForm.phone" name="phone" placeholder="+255..." required>
+        </div>
+      </div>
+
+      <div class="bm-section-title">Stay Details</div>
+      <div class="bm-row">
+        <div class="bm-field">
+          <label>Check-in *</label>
+          <input type="date" class="bm-input" [(ngModel)]="bookingForm.checkIn" name="checkIn" [min]="minDate" [max]="maxDate" required>
+        </div>
+        <div class="bm-field">
+          <label>Check-out *</label>
+          <input type="date" class="bm-input" [(ngModel)]="bookingForm.checkOut" name="checkOut" [min]="minDate" [max]="maxDate" required>
+        </div>
+      </div>
+      <div class="bm-row">
+        <div class="bm-field">
+          <label>Adults *</label>
+          <input type="number" class="bm-input" [(ngModel)]="bookingForm.adults" name="adults" min="1" required>
+        </div>
+        <div class="bm-field">
+          <label>Children</label>
+          <input type="number" class="bm-input" [(ngModel)]="bookingForm.children" name="children" min="0">
+        </div>
+      </div>
+      <div class="bm-field">
+        <label>Special Requests</label>
+        <textarea class="bm-input bm-textarea" [(ngModel)]="bookingForm.specialRequests" name="specialRequests" rows="2" placeholder="Any special requests..."></textarea>
+      </div>
+
+      <div class="bm-total" *ngIf="calculateTotal() > 0">
+        <span>Estimated Total</span>
+        <strong>{{ calculateTotal().toLocaleString() }} Tsh</strong>
+      </div>
+
+      <div *ngIf="bookingError" class="bm-error">
+        <i class="bi bi-exclamation-circle"></i> {{ bookingError }}
+      </div>
+
+      <button type="submit" class="bm-submit-btn" [disabled]="bookingSubmitting || !isBookingFormValid()">
+        <span *ngIf="bookingSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+        {{ bookingSubmitting ? 'Processing...' : 'Confirm Booking' }}
+      </button>
+    </form>
+  </div>
+</div>

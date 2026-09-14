@@ -1,0 +1,114 @@
+:host { display: block; }
+
+.restaurant-hero {
+  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #0d3318 100%);
+  color: #fff;
+  padding: 2.5rem 0;
+}
+
+.restaurant-title {
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.restaurant-description {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.restaurant-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.restaurant-main-image {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-weight: 700;
+  color: var(--royal-green, #1a5c2e);
+  margin-bottom: 1.5rem;
+}
+
+.menu-category {
+  margin-bottom: 2.5rem;
+}
+
+.menu-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e8f5e9;
+}
+
+.menu-category-header h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--royal-green, #1a5c2e);
+}
+
+.menu-category-header span {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.menu-card {
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.menu-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.menu-image-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--royal-green, #1a5c2e);
+}
+
+.menu-item-name {
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 0.35rem;
+}
+
+.menu-description {
+  color: #6c757d;
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+
+.menu-price {
+  color: var(--royal-green, #1a5c2e);
+  white-space: nowrap;
+  font-size: 1.1rem;
+  font-weight: 700;
+}

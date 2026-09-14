@@ -1,0 +1,230 @@
+<div class="guest-page">
+  <!-- Hero Header -->
+  <header class="guest-hero">
+    <div class="container text-center py-5">
+      <h1><i class="bi bi-building"></i> Welcome to Our Hotel</h1>
+      <p class="lead">Experience luxury and comfort — Book your stay online</p>
+      <a class="btn btn-light btn-lg mt-2" href="#booking"><i class="bi bi-calendar-plus"></i> Book Now</a>
+      <a class="btn btn-outline-light btn-lg mt-2 ms-2" href="#menu"><i class="bi bi-menu-button-wide"></i> View Menu</a>
+      <a class="btn btn-outline-light btn-lg mt-2 ms-2" routerLink="/login"><i class="bi bi-box-arrow-in-right"></i> Staff Login</a>
+    </div>
+  </header>
+
+  <!-- Room Availability -->
+  <section class="container my-5">
+    <h3 class="section-title"><i class="bi bi-door-open"></i> Room Availability</h3>
+    <div class="row g-3 mb-4">
+      <div class="col-md-3" *ngFor="let t of roomSummary.types">
+        <div class="card room-type-card text-center">
+          <div class="card-body">
+            <h5>{{ t.type | titlecase }}</h5>
+            <p class="text-muted mb-1">From <strong>{{ t.minPrice | number }} Tsh</strong>/night</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="stat-card text-center">
+          <div class="stat-number">{{ roomSummary.available }}</div>
+          <div class="stat-label">Rooms Available</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card text-center">
+          <div class="stat-number">{{ roomSummary.total }}</div>
+          <div class="stat-label">Total Rooms</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hotel Services -->
+  <section class="services-section py-5">
+    <div class="container">
+      <h3 class="section-title text-center mb-4"><i class="bi bi-stars"></i> Our Services</h3>
+      <div class="row g-3 text-center">
+        <div class="col-md-3" *ngFor="let s of services">
+          <div class="card service-card h-100">
+            <div class="card-body">
+              <i class="bi {{ s.icon }} service-icon"></i>
+              <h6 class="mt-2">{{ s.name }}</h6>
+              <small class="text-muted">{{ s.desc }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Restaurants -->
+  <section class="container my-5" id="restaurants">
+    <h3 class="section-title"><i class="bi bi-shop"></i> Our Restaurants</h3>
+    <div class="alert alert-info" *ngIf="restaurants.length === 0">
+      No restaurants are available right now.
+    </div>
+    <div class="row g-3" *ngIf="restaurants.length > 0">
+      <div class="col-md-4" *ngFor="let r of restaurants">
+        <div class="card restaurant-card h-100">
+          <div class="restaurant-card-img-container">
+            <img *ngIf="r.imageUrl" [src]="imageUrl(r.imageUrl)" class="restaurant-card-img" [alt]="r.name">
+            <div *ngIf="!r.imageUrl" class="restaurant-card-img-placeholder"><i class="bi bi-shop"></i></div>
+            <span class="restaurant-status-badge" [ngClass]="r.isActive ? 'status-open' : 'status-closed'">
+              {{ r.isActive ? 'Open' : 'Closed' }}
+            </span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ r.name }}</h5>
+            <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ r.location || 'Location not specified' }}</p>
+            <p class="text-muted small mb-2"><i class="bi bi-clock"></i> {{ r.openingTime || '-' }} - {{ r.closingTime || '-' }}</p>
+            <p class="text-muted small mb-3"><i class="bi bi-telephone"></i> {{ r.phone || 'No phone' }}</p>
+            <a class="btn btn-primary btn-sm w-100" [routerLink]="['/guest/restaurant', r.id]">View Menu</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hotel Menu -->
+  <section class="container my-5" id="menu">
+    <h3 class="section-title"><i class="bi bi-menu-button-wide"></i> Hotel Menu</h3>
+    <div class="alert alert-info" *ngIf="menuItems.length === 0">
+      No menu items are available right now.
+    </div>
+    <div *ngIf="menuItems.length > 0">
+    <div class="menu-category" *ngFor="let category of menuCategories">
+      <div class="menu-category-header">
+        <h5>{{ category | titlecase }}</h5>
+        <span>{{ getMenuItemsByCategory(category).length }} items</span>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4" *ngFor="let item of getMenuItemsByCategory(category)">
+          <div class="card menu-card h-100">
+            <img *ngIf="item.imageUrl" [src]="item.imageUrl" class="menu-image" [alt]="item.name">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <h6 class="menu-item-name">{{ item.name }}</h6>
+                  <p class="menu-description">{{ item.description }}</p>
+                </div>
+                <strong class="menu-price">{{ item.price | number }} Tsh</strong>
+              </div>
+              <div class="menu-meta" *ngIf="item.portionSize || item.preparationTime || item.calories">
+                <span *ngIf="item.portionSize"><i class="bi bi-cup-straw"></i> {{ item.portionSize }}</span>
+                <span *ngIf="item.preparationTime"><i class="bi bi-clock"></i> {{ item.preparationTime }} min</span>
+                <span *ngIf="item.calories"><i class="bi bi-fire"></i> {{ item.calories }} cal</span>
+              </div>
+              <div class="menu-tags" *ngIf="item.dietaryTags?.length">
+                <span *ngFor="let tag of item.dietaryTags">{{ tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="container my-5" id="booking">
+    <h3 class="section-title"><i class="bi bi-calendar-check"></i> Make a Reservation</h3>
+
+    <div *ngIf="bookingSuccess" class="alert alert-success">
+      <h5><i class="bi bi-check-circle"></i> Booking Confirmed!</h5>
+      <p>Room <strong>{{ bookingResult.booking?.roomNumber }}</strong> booked from {{ bookingResult.booking?.checkIn }} to {{ bookingResult.booking?.checkOut }}.</p>
+      <p>Invoice #{{ bookingResult.billing?.id }} — Total: <strong>{{ bookingResult.billing?.totalAmount | number }} Tsh</strong></p>
+      <button class="btn btn-primary me-2" (click)="showPaymentForm = true"><i class="bi bi-credit-card"></i> Pay Now</button>
+      <button class="btn btn-success" (click)="shareWhatsApp()"><i class="bi bi-whatsapp"></i> Share Invoice</button>
+    </div>
+
+    <!-- Payment Form -->
+    <div *ngIf="showPaymentForm && bookingResult.billing" class="card mb-4">
+      <div class="card-header fw-semibold">Payment</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Amount ($)</label>
+            <input type="number" class="form-control" [(ngModel)]="paymentAmount" step="0.01">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Method</label>
+            <select class="form-select" [(ngModel)]="paymentMethod">
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+              <option value="transfer">Bank Transfer</option>
+              <option value="mobile">Mobile Money</option>
+            </select>
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" (click)="makePayment()"><i class="bi bi-send"></i> Submit Payment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="!bookingSuccess">
+      <div class="card-body">
+        <div *ngIf="bookingError" class="alert alert-danger">{{ bookingError }}</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Full Name *</label>
+            <input type="text" class="form-control" [(ngModel)]="guestForm.fullName">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Phone *</label>
+            <input type="text" class="form-control" [(ngModel)]="guestForm.phone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="guestForm.email">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">ID/Passport Number</label>
+            <input type="text" class="form-control" [(ngModel)]="guestForm.idNumber">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nationality</label>
+            <input type="text" class="form-control" [(ngModel)]="guestForm.nationality">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Room *</label>
+            <select class="form-select" [(ngModel)]="guestForm.roomId">
+              <option value="">Select room...</option>
+              <option *ngFor="let r of rooms" [value]="r.id">{{ r.roomNumber }} — {{ r.type | titlecase }} ({{ r.price | number }} Tsh/night)</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Check-In *</label>
+            <input type="date" class="form-control" [(ngModel)]="guestForm.checkIn">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Check-Out *</label>
+            <input type="date" class="form-control" [(ngModel)]="guestForm.checkOut">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Adults</label>
+            <input type="number" class="form-control" [(ngModel)]="guestForm.adults" min="1">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Children</label>
+            <input type="number" class="form-control" [(ngModel)]="guestForm.children" min="0">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Special Requests</label>
+            <textarea class="form-control" [(ngModel)]="guestForm.specialRequests" rows="2"></textarea>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary btn-lg" (click)="submitBooking()" [disabled]="submitting">
+              <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+              {{ submitting ? 'Booking...' : 'Confirm Booking' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="guest-footer text-center py-3">
+    <small class="text-muted">&copy; 2025 Hotel Management System. All rights reserved.</small>
+  </footer>
+</div>

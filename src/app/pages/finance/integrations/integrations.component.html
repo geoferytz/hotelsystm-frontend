@@ -1,0 +1,27 @@
+<div class="page-header">
+  <h3><a routerLink="/finance" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class="bi bi-diagram-3"></i> Finance Integrations</h3>
+</div>
+
+<div class="finance-submodule-hero">
+  <span>Finance Module</span>
+  <h2>Connect Finance with other hotel modules</h2>
+  <p>The Finance module integrates with Reservations, Restaurant, Housekeeping, and Inventory to capture charges, payments, and expenses across the hotel.</p>
+</div>
+
+<div class="finance-feature-grid">
+  <div class="finance-feature-card" *ngFor="let integration of integrations">
+    <div class="feature-icon"><i class="bi" [ngClass]="integration.icon"></i></div>
+    <h5>{{ integration.title }}</h5>
+    <p>{{ integration.text }}</p>
+  </div>
+</div>
+
+<div class="finance-card mt-3">
+  <h5><i class="bi bi-link-45deg"></i> Integration Details</h5>
+  <div class="workflow-list">
+    <div><strong>Reservations → Room Charges</strong><span>Room rates and booking charges flow into Finance invoices.</span></div>
+    <div><strong>Restaurant → Food Bills</strong><span>Restaurant orders and food bills are recorded in Finance.</span></div>
+    <div><strong>Housekeeping → Service Fees</strong><span>Housekeeping services and fees are tracked in Finance.</span></div>
+    <div><strong>Inventory → Stock Expenses</strong><span>Inventory purchases and stock costs are recorded as expenses.</span></div>
+  </div>
+</div>

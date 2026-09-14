@@ -1,0 +1,236 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> Salary Management</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">New Salary</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterStatus" (change)="loadSalaries()">
+      <option value="">All Statuses</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterPayPeriod" (change)="loadSalaries()">
+      <option value="">All Pay Periods</option>
+      <option *ngFor="let period of payPeriods" [value]="period">{{ period | titlecase }}</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="salaryColumns"
+  [data]="salaries"
+  [actions]="salaryActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="salaries.length"
+  emptyMessage="No salary records found"
+  (pageChange)="changePage($event)"
+  (actionClick)="onSalaryTableAction($event)">
+</app-shared-table>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title">{{ editing ? 'Edit Salary' : 'New Salary' }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Employee</label>
+            <select class="form-select" [(ngModel)]="form.workerId" name="workerId" required>
+              <option value="">Select Employee</option>
+              <option *ngFor="let worker of workers" [value]="worker.id">{{ worker.fullName }} ({{ worker.position }} - {{ worker.department }})</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Base Salary</label>
+              <input type="number" class="form-control" [(ngModel)]="form.baseSalary" name="baseSalary" required min="0" step="0.01">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Bonus</label>
+              <input type="number" class="form-control" [(ngModel)]="form.bonus" name="bonus" min="0" step="0.01">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Overtime Amount</label>
+              <input type="number" class="form-control" [(ngModel)]="form.overtime" name="overtime" min="0" step="0.01">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Overtime Hours</label>
+              <input type="number" class="form-control" [(ngModel)]="form.overtimeHours" name="overtimeHours" min="0" step="0.5">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Deductions</label>
+            <input type="number" class="form-control" [(ngModel)]="form.deductions" name="deductions" min="0" step="0.01">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Pay Period</label>
+              <select class="form-select" [(ngModel)]="form.payPeriod" name="payPeriod">
+                <option value="weekly">Weekly</option>
+                <option value="bi-weekly">Bi-Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Pay Date</label>
+              <input type="date" class="form-control" [(ngModel)]="form.payDate" name="payDate" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <select class="form-select" [(ngModel)]="form.paymentMethod" name="paymentMethod">
+              <option value="">Select Method</option>
+              <option *ngFor="let method of paymentMethods" [value]="method">{{ method | titlecase }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" [(ngModel)]="form.notes" name="notes" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveSalary()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title">Salary Details #{{ selectedSalary?.id }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeDetailsModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedSalary">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Employee</label>
+              <strong>{{ selectedSalary.Employee?.fullName || getWorkerName(selectedSalary.workerId) }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Role</label>
+              <strong>{{ selectedSalary.Employee?.role || '-' }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Base Salary</label>
+              <strong>{{ selectedSalary.baseSalary | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Bonus</label>
+              <strong>{{ selectedSalary.bonus | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Overtime</label>
+              <strong>{{ selectedSalary.overtime | number }} ({{ selectedSalary.overtimeHours }} hrs)</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Deductions</label>
+              <strong>{{ selectedSalary.deductions | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Gross Salary</label>
+              <strong>{{ selectedSalary.grossSalary | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Net Salary</label>
+              <strong class="text-success">{{ selectedSalary.netSalary | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Pay Date</label>
+              <strong>{{ selectedSalary.payDate | date:'medium' }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Pay Period</label>
+              <strong>{{ selectedSalary.payPeriod | titlecase }}</strong>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Status</label>
+              <span class="badge bg-{{ getStatusBadgeClass(selectedSalary.status) }}">{{ selectedSalary.status }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-card">
+              <label>Payment Method</label>
+              <strong><i class="bi {{ getMethodIcon(selectedSalary.paymentMethod) }}"></i> {{ selectedSalary.paymentMethod || '-' }}</strong>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="selectedSalary.notes">
+            <div class="detail-card">
+              <label>Notes</label>
+              <p>{{ selectedSalary.notes }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Close</button>
+        <button type="button" class="btn btn-success" (click)="markAsPaid()" *ngIf="selectedSalary?.status === 'pending'">
+          <i class="bi bi-check-circle"></i> Mark as Paid
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" [class.show]="showDeleteModal" [style.display]="showDeleteModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeDeleteModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body" *ngIf="deletingSalary">
+        <p>Are you sure you want to delete this salary record?</p>
+        <div class="alert alert-warning">
+          <strong>Employee:</strong> {{ deletingSalary.Employee?.fullName || getWorkerName(deletingSalary.workerId) }}<br>
+          <strong>Net Salary:</strong> {{ deletingSalary.netSalary | number }}<br>
+          <strong>Pay Date:</strong> {{ deletingSalary.payDate | date:'short' }}
+        </div>
+        <p class="text-muted mb-0">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()"><i class="bi bi-trash"></i> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

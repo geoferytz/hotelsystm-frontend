@@ -1,0 +1,106 @@
+:host { display: block; }
+
+/* Invoice Details Modal */
+.invoice-header {
+  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #2d7a45 100%);
+  color: white;
+  border-radius: 0;
+}
+.invoice-header .text-muted { color: rgba(255,255,255,0.7) !important; }
+
+.invoice-logo {
+  height: 45px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.close-circle {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: closePulse 2s ease-in-out infinite;
+}
+
+.close-circle i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.close-circle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+@keyframes closePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+.invoice-card {
+  background: #f8faf9;
+  border: 1px solid #e0ede4;
+  border-radius: 10px;
+  padding: 16px;
+}
+.invoice-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--royal-green, #1a5c2e);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+.invoice-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #e8e8e8;
+  font-size: 13px;
+}
+.invoice-info-row:last-child { border-bottom: none; }
+.invoice-info-row span { color: #777; }
+.invoice-info-row strong { color: #333; }
+
+.invoice-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--royal-green, #1a5c2e);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.invoice-table-head th {
+  background: var(--royal-green, #1a5c2e);
+  color: white;
+  font-size: 13px;
+  border-color: transparent;
+}
+.extra-charge-row { background: #f0faf3; }
+.extra-charge-row td { font-size: 13px; }
+
+.extra-charge-form {
+  background: #f8faf9;
+  border: 1px solid #e0ede4;
+  border-radius: 10px;
+  padding: 16px;
+}

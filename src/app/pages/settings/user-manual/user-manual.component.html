@@ -1,0 +1,59 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> User Manual</h3>
+</div>
+
+<div class="manual-hero">
+  <div>
+    <span class="manual-kicker">Hotel Management System Guide</span>
+    <h2>System User Manual</h2>
+    <p>Use this guide to understand each module and the main workflow for managing hotel operations.</p>
+  </div>
+  <div class="manual-hero-icon">
+    <i class="bi bi-book"></i>
+  </div>
+</div>
+
+<div class="manual-layout">
+  <div class="manual-card quick-guide">
+    <h5><i class="bi bi-lightning-charge"></i> Quick Workflow</h5>
+    <ol>
+      <li>Configure hotel settings, room types, meals, and services.</li>
+      <li>Create rooms and keep room statuses updated.</li>
+      <li>Register customers and create bookings.</li>
+      <li>Check in guests when they arrive.</li>
+      <li>Place guest food and drink orders when requested.</li>
+      <li>Generate bills, record payments, and check out guests.</li>
+      <li>Review reports and manage users, roles, and permissions.</li>
+    </ol>
+  </div>
+
+  <div class="manual-card support-card">
+    <h5><i class="bi bi-info-circle"></i> Helpful Notes</h5>
+    <div class="note-item">
+      <strong>Required permissions</strong>
+      <span>Some modules are only visible when your role has access.</span>
+    </div>
+    <div class="note-item">
+      <strong>Active hotel</strong>
+      <span>Use the hotel switcher in the sidebar to work with a specific hotel.</span>
+    </div>
+    <div class="note-item">
+      <strong>Data accuracy</strong>
+      <span>Keep bookings, room status, and payments updated for accurate reports.</span>
+    </div>
+  </div>
+</div>
+
+<div class="manual-sections">
+  <div class="manual-section" *ngFor="let section of sections">
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="bi" [ngClass]="section.icon"></i>
+      </div>
+      <h5>{{ section.title }}</h5>
+    </div>
+    <ul>
+      <li *ngFor="let item of section.items">{{ item }}</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,215 @@
+<div class="public-hotels-page">
+  <!-- Public Header -->
+  <header class="public-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="public-brand">
+          <a routerLink="/public/hotels" class="brand-link">
+            <img src="assets/images/NABOO.png" alt="NABOO Logo" class="brand-logo">
+          </a>
+        </div>
+        <div class="public-nav d-flex align-items-center gap-3">
+          <div class="theme-picker position-relative">
+            <button class="btn btn-outline-secondary btn-sm" (click)="showThemePicker = !showThemePicker" title="Change Theme">
+              <i class="bi bi-palette-fill"></i>
+            </button>
+            <div class="theme-dropdown" *ngIf="showThemePicker" (click)="$event.stopPropagation()">
+              <div class="theme-item" *ngFor="let t of themes" (click)="setTheme(t.key)" [class.active]="currentTheme === t.key">
+                <div class="theme-color" [style.background-color]="t.theme.primary"></div>
+                <span>{{ t.theme.name }}</span>
+              </div>
+            </div>
+          </div>
+          <a routerLink="/notifications" class="btn btn-outline-secondary btn-sm position-relative" title="Notifications">
+            <i class="bi bi-bell"></i>
+            <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+              {{ unreadCount }}
+            </span>
+          </a>
+          <a routerLink="/login" class="btn btn-primary btn-sm">
+            <i class="bi bi-box-arrow-in-right"></i> Sign In
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <header class="public-hero">
+    <div class="container text-center py-5">
+      <h1><i class="bi bi-building"></i> Find Your Perfect Stay & Dining</h1>
+      <p class="lead">Browse our collection of hotels and restaurants for your next adventure</p>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="container">
+      <div class="search-bar">
+        <div class="row g-2">
+          <!-- City -->
+          <div class="col-md-3">
+            <label class="search-label">City</label>
+            <app-city-selector
+              [cities]="cities"
+              [selectedCity]="selectedCity"
+              (cityChange)="onCityChange($event)">
+            </app-city-selector>
+          </div>
+          
+          <!-- Date Range -->
+          <div class="col-md-3">
+            <label class="search-label">Check-in - Check-out</label>
+            <app-date-range-picker
+              [checkIn]="checkIn"
+              [checkOut]="checkOut"
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+              (datesChange)="onDateRangeChange($event)">
+            </app-date-range-picker>
+          </div>
+          
+          <!-- Guests -->
+          <div class="col-md-3">
+            <label class="search-label">Guests</label>
+            <app-guest-selector
+              [adults]="adults"
+              [children]="children"
+              [rooms]="rooms"
+              (guestsChange)="onGuestsChange($event)">
+            </app-guest-selector>
+          </div>
+          
+          <!-- Search Button -->
+          <div class="col-md-3">
+            <label class="search-label">&nbsp;</label>
+            <button class="btn btn-search w-100" (click)="onSearch()">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </div>
+        <button *ngIf="selectedCity || checkIn || checkOut" class="btn-clear" (click)="clearSearch()">
+          <i class="bi bi-x-circle"></i> Clear filters
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <section class="container my-5">
+    <div class="tab-navigation">
+      <button class="tab-btn" [class.active]="activeTab === 'hotels'" (click)="activeTab = 'hotels'">
+        <i class="bi bi-building"></i> Hotels
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'restaurants'" (click)="activeTab = 'restaurants'">
+        <i class="bi bi-shop"></i> Restaurants
+      </button>
+    </div>
+  </section>
+
+  <!-- Hotels Listing -->
+  <section class="container my-5" *ngIf="activeTab === 'hotels'">
+    <h3 class="section-title"><i class="bi bi-building"></i> Available Hotels</h3>
+
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div *ngIf="!loading && hotels.length === 0" class="text-center py-5">
+      <p class="text-muted">No hotels available at the moment.</p>
+    </div>
+
+    <div *ngIf="!loading && hotels.length > 0" class="row g-4">
+      <div class="col-md-4" *ngFor="let hotel of hotels">
+        <div class="card hotel-card" (click)="viewHotel(hotel.id)">
+          <div class="hotel-image-container">
+            <img *ngIf="hotel.imageUrl" [src]="normalizeImageUrl(hotel.imageUrl)" [alt]="hotel.name" class="hotel-image">
+            <div *ngIf="!hotel.imageUrl" class="no-image-placeholder">
+              <i class="bi bi-building"></i>
+              <span>No Image</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="card-title mb-0">{{ hotel.name }}</h5>
+              <span class="hotel-rating">
+                <span *ngFor="let i of [].constructor(hotel.starRating)" class="star">★</span>
+              </span>
+            </div>
+            <p class="text-muted mb-2">
+              <i class="bi bi-geo-alt"></i> {{ hotel.city }}, {{ hotel.country }}
+            </p>
+            <p class="card-text small">{{ hotel.description }}</p>
+            
+            <!-- Hotel Services -->
+            <div *ngIf="hotel.HotelServices && hotel.HotelServices.length > 0" class="hotel-services mt-3">
+              <small class="text-muted fw-semibold">Services:</small>
+              <div class="d-flex flex-wrap gap-2 mt-1">
+                <span *ngFor="let service of hotel.HotelServices" class="service-badge">
+                  <i class="bi {{ service.icon || 'bi-star' }}"></i> {{ service.name }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="text-muted">
+                <i class="bi bi-telephone"></i> {{ hotel.phone }}
+              </small>
+              <button class="btn btn-primary btn-sm">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Restaurants Listing -->
+  <section class="container my-5" *ngIf="activeTab === 'restaurants'">
+    <h3 class="section-title"><i class="bi bi-shop"></i> Restaurants</h3>
+
+    <div *ngIf="restaurants.length === 0" class="text-center py-5">
+      <p class="text-muted">No restaurants available at the moment.</p>
+    </div>
+
+    <div *ngIf="restaurants.length > 0" class="row g-4">
+      <div class="col-md-4" *ngFor="let r of restaurants">
+        <div class="card restaurant-card">
+          <div class="restaurant-image-container">
+            <img *ngIf="r.imageUrl" [src]="imageUrl(r.imageUrl)" [alt]="r.name" class="restaurant-image">
+            <div *ngIf="!r.imageUrl" class="no-image-placeholder">
+              <i class="bi bi-shop"></i>
+              <span>No Image</span>
+            </div>
+            <span class="restaurant-status-badge" [ngClass]="r.isActive ? 'status-open' : 'status-closed'">
+              {{ r.isActive ? 'Open' : 'Closed' }}
+            </span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ r.name }}</h5>
+            <p class="text-muted mb-2">
+              <i class="bi bi-geo-alt"></i> {{ r.location || 'Location not specified' }}
+            </p>
+            <p class="text-muted mb-2">
+              <i class="bi bi-clock"></i> {{ r.openingTime || '-' }} - {{ r.closingTime || '-' }}
+            </p>
+            <p class="text-muted mb-2">
+              <i class="bi bi-telephone"></i> {{ r.phone || 'No phone' }}
+            </p>
+            <p class="card-text small">{{ r.description || 'No description available.' }}</p>
+            <div class="d-flex justify-content-end mt-3">
+              <a class="btn btn-primary btn-sm" [routerLink]="['/guest/restaurant', r.id]">
+                View Menu
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="public-footer text-center py-3">
+    <small class="text-muted">&copy; 2025 Hotel Management System. All rights reserved.</small>
+  </footer>
+</div>

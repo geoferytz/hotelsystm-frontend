@@ -1,0 +1,149 @@
+<div class="container-fluid py-4">
+  <div class="page-header">
+    <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Restaurant Table Bookings</h3>
+    <button class="btn btn-primary btn-split" (click)="openForm()">
+      <span class="btn-text">Add Booking</span>
+      <span class="btn-divider"></span>
+      <span class="btn-icon"><i class="bi bi-calendar-check icon-spin"></i></span>
+    </button>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal fade show d-block" *ngIf="showForm" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header modal-header-animated">
+          <h5 class="modal-title">Add Table Booking</h5>
+          <button type="button" class="btn-close btn-close-animated" (click)="closeForm()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="submitForm()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Guest Name *</label>
+                <input type="text" class="form-control" [(ngModel)]="bookingForm.guestName" name="guestName" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !bookingForm.guestName">Guest name is required</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" [(ngModel)]="bookingForm.guestEmail" name="guestEmail">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone *</label>
+              <input type="tel" class="form-control" [(ngModel)]="bookingForm.guestPhone" name="guestPhone" required>
+              <div class="text-danger small" *ngIf="formSubmitted && !bookingForm.guestPhone">Phone is required</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Number of Guests *</label>
+              <input type="number" class="form-control" [(ngModel)]="bookingForm.numberOfGuests" name="numberOfGuests" min="1" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Booking Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="bookingForm.bookingDate" name="bookingDate" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !bookingForm.bookingDate">Booking date is required</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Booking Time *</label>
+                <input type="time" class="form-control" [(ngModel)]="bookingForm.bookingTime" name="bookingTime" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !bookingForm.bookingTime">Booking time is required</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Special Requests</label>
+              <textarea class="form-control" [(ngModel)]="bookingForm.specialRequests" name="specialRequests" rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Guest Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Guests</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Special Requests</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of paginatedBookings">
+          <td>{{ booking.id }}</td>
+          <td>{{ booking.guestName }}</td>
+          <td>{{ booking.guestEmail || '-' }}</td>
+          <td>{{ booking.guestPhone }}</td>
+          <td>{{ booking.numberOfGuests }}</td>
+          <td>{{ booking.bookingDate }}</td>
+          <td>{{ booking.bookingTime }}</td>
+          <td>{{ booking.specialRequests || '-' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass(booking.status)">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-warning" (click)="updateStatus(booking.id, 'pending')" title="Pending">
+                <i class="bi bi-clock"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-success" (click)="updateStatus(booking.id, 'confirmed')" title="Confirmed">
+                <i class="bi bi-check-circle"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="updateStatus(booking.id, 'cancelled')" title="Cancelled">
+                <i class="bi bi-x-circle"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info" (click)="updateStatus(booking.id, 'completed')" title="Completed">
+                <i class="bi bi-check2-all"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="bookings.length === 0">
+          <td colspan="10" class="text-center text-muted py-4">No table bookings found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-wrapper" *ngIf="!loading && bookings.length > 0">
+    <div class="pagination-info">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, bookings.length) }} of {{ bookings.length }} entries
+    </div>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        </li>
+        <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+          <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

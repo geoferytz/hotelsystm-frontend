@@ -1,0 +1,82 @@
+<div class="my-bookings-container">
+  <div class="bookings-header">
+    <h1>My Bookings</h1>
+    <button class="btn btn-outline-light" (click)="goToHotels()">
+      <i class="bi bi-building"></i> Browse Hotels
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading && bookings.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="bi bi-calendar-x"></i>
+    </div>
+    <h2>No Bookings Found</h2>
+    <p>You haven't made any bookings yet. Start by exploring our hotels!</p>
+    <button class="btn btn-primary" (click)="goToHotels()">Browse Hotels</button>
+  </div>
+
+  <div *ngIf="!loading && bookings.length > 0" class="bookings-list">
+    <div *ngFor="let booking of bookings" class="booking-card">
+      <div class="booking-header">
+        <div class="hotel-info">
+          <h3>{{ booking.Hotel?.name }}</h3>
+          <p class="location">
+            <i class="bi bi-geo-alt"></i> {{ booking.Hotel?.city }}, {{ booking.Hotel?.country }}
+          </p>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+          {{ getStatusLabel(booking.status) }}
+        </span>
+      </div>
+
+      <div class="booking-details">
+        <div class="detail-row">
+          <span class="label">Room:</span>
+          <span class="value">Room {{ booking.Room?.roomNumber }} ({{ booking.Room?.type }})</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-in:</span>
+          <span class="value">{{ booking.checkIn | date:'mediumDate' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Check-out:</span>
+          <span class="value">{{ booking.checkOut | date:'mediumDate' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Duration:</span>
+          <span class="value">{{ calculateNights(booking.checkIn, booking.checkOut) }} night(s)</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Guests:</span>
+          <span class="value">{{ booking.adults }} adult(s), {{ booking.children }} child(ren)</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Total:</span>
+          <span class="value price">{{ (calculateNights(booking.checkIn, booking.checkOut) * (booking.Room?.price || 0)).toLocaleString() }} Tsh</span>
+        </div>
+      </div>
+
+      <div *ngIf="booking.specialRequests" class="special-requests">
+        <span class="label">Special Requests:</span>
+        <p>{{ booking.specialRequests }}</p>
+      </div>
+
+      <div class="booking-footer">
+        <span class="booking-id">Booking ID: #{{ booking.id }}</span>
+        <span class="booking-date">Booked on: {{ booking.createdAt | date:'mediumDate' }}</span>
+      </div>
+
+      <button class="btn btn-outline-primary w-100" (click)="viewHotel(booking.Hotel?.id!)">
+        <i class="bi bi-building"></i> View Hotel
+      </button>
+    </div>
+  </div>
+</div>

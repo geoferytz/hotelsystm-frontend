@@ -1,0 +1,203 @@
+<div class="restaurant-detail-page">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3 text-muted">Loading restaurant details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="container my-5">
+    <div class="alert alert-danger">{{ error }}</div>
+    <a class="btn btn-primary" routerLink="/public/hotels" [queryParams]="{ tab: 'restaurants' }"><i class="bi bi-arrow-left"></i> Back to Restaurants</a>
+  </div>
+
+  <!-- Restaurant Details -->
+  <div *ngIf="restaurant && !loading">
+    <!-- Hero Section -->
+    <header class="restaurant-hero">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="restaurant-title">{{ restaurant.name }}</h1>
+            <p class="restaurant-description">{{ restaurant.description || 'No description available.' }}</p>
+            <div class="restaurant-meta">
+              <span *ngIf="restaurant.location"><i class="bi bi-geo-alt"></i> {{ restaurant.location }}</span>
+              <span *ngIf="restaurant.phone"><i class="bi bi-telephone"></i> {{ restaurant.phone }}</span>
+              <span *ngIf="restaurant.email"><i class="bi bi-envelope"></i> {{ restaurant.email }}</span>
+              <span *ngIf="restaurant.openingTime || restaurant.closingTime"><i class="bi bi-clock"></i> {{ restaurant.openingTime || '-' }} - {{ restaurant.closingTime || '-' }}</span>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <a class="btn btn-outline-light" routerLink="/public/hotels" [queryParams]="{ tab: 'restaurants' }"><i class="bi bi-arrow-left"></i> Back</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Restaurant Image -->
+    <div class="container my-4" *ngIf="restaurant.imageUrl">
+      <img [src]="imageUrl(restaurant.imageUrl)" class="restaurant-main-image" [alt]="restaurant.name">
+    </div>
+
+    <!-- Booking Actions -->
+    <div class="container my-4">
+      <div class="d-flex gap-3 flex-wrap">
+        <button class="btn btn-primary" (click)="showTableBookingForm = true">
+          <i class="bi bi-calendar-check"></i> Book a Table
+        </button>
+        <button class="btn btn-success" (click)="showMenuOrderForm = true">
+          <i class="bi bi-cart"></i> Order Menu
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Booking Form Modal -->
+    <div class="modal fade show d-block" *ngIf="showTableBookingForm" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header modal-header-animated">
+            <h5 class="modal-title">Book a Table</h5>
+            <button type="button" class="btn-close btn-close-animated" (click)="showTableBookingForm = false"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="submitTableBooking()">
+              <div class="mb-3">
+                <label class="form-label">Guest Name *</label>
+                <input type="text" class="form-control" [(ngModel)]="tableBookingForm.guestName" name="guestName" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" [(ngModel)]="tableBookingForm.guestEmail" name="guestEmail">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone *</label>
+                <input type="tel" class="form-control" [(ngModel)]="tableBookingForm.guestPhone" name="guestPhone" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Number of Guests *</label>
+                <input type="number" class="form-control" [(ngModel)]="tableBookingForm.numberOfGuests" name="numberOfGuests" min="1" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Booking Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="tableBookingForm.bookingDate" name="bookingDate" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Booking Time *</label>
+                <input type="time" class="form-control" [(ngModel)]="tableBookingForm.bookingTime" name="bookingTime" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Special Requests</label>
+                <textarea class="form-control" [(ngModel)]="tableBookingForm.specialRequests" name="specialRequests" rows="3"></textarea>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Submit Booking</button>
+                <button type="button" class="btn btn-secondary" (click)="showTableBookingForm = false">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Order Form Modal -->
+    <div class="modal fade show d-block" *ngIf="showMenuOrderForm" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-animated">
+            <h5 class="modal-title">Order Menu</h5>
+            <button type="button" class="btn-close btn-close-animated" (click)="showMenuOrderForm = false"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="submitMenuOrder()">
+              <div class="mb-3">
+                <label class="form-label">Guest Name *</label>
+                <input type="text" class="form-control" [(ngModel)]="menuOrderForm.guestName" name="guestName" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" [(ngModel)]="menuOrderForm.guestEmail" name="guestEmail">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone *</label>
+                <input type="tel" class="form-control" [(ngModel)]="menuOrderForm.guestPhone" name="guestPhone" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Order Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="menuOrderForm.orderDate" name="orderDate" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Order Time *</label>
+                <input type="time" class="form-control" [(ngModel)]="menuOrderForm.orderTime" name="orderTime" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Order Type *</label>
+                <select class="form-select" [(ngModel)]="menuOrderForm.orderType" name="orderType" required>
+                  <option value="dine_in">Dine In</option>
+                  <option value="takeaway">Takeaway</option>
+                  <option value="delivery">Delivery</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Select Menu Items</label>
+                <div class="menu-items-selection">
+                  <div *ngFor="let item of menuItems" class="form-check">
+                    <input class="form-check-input" type="checkbox" [id]="'item-' + item.id"
+                      [checked]="isMenuItemSelected(item.id)" (change)="toggleMenuItemSelection(item.id)">
+                    <label class="form-check-label" [for]="'item-' + item.id">
+                      {{ item.name }} - {{ item.price | number }} Tsh
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Total Amount</label>
+                <div class="form-control bg-light">{{ menuOrderForm.totalAmount | number }} Tsh</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Special Requests</label>
+                <textarea class="form-control" [(ngModel)]="menuOrderForm.specialRequests" name="specialRequests" rows="3"></textarea>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">Submit Order</button>
+                <button type="button" class="btn btn-secondary" (click)="showMenuOrderForm = false">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Section -->
+    <section class="container my-5">
+      <h2 class="section-title"><i class="bi bi-card-list"></i> Menu</h2>
+      <div class="alert alert-info" *ngIf="menuItems.length === 0">
+        No menu items are available for this restaurant right now.
+      </div>
+      <div *ngIf="menuItems.length > 0">
+        <div class="menu-category" *ngFor="let category of menuCategories">
+          <div class="menu-category-header">
+            <h3>{{ getCategoryLabel(category) }}</h3>
+            <span>{{ getMenuItemsByCategory(category).length }} items</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-4" *ngFor="let item of getMenuItemsByCategory(category)">
+              <div class="card menu-card h-100">
+                <img *ngIf="item.imageUrl" [src]="imageUrl(item.imageUrl)" class="menu-image" [alt]="item.name">
+                <div *ngIf="!item.imageUrl" class="menu-image-placeholder"><i class="bi bi-utensils"></i></div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <h6 class="menu-item-name">{{ item.name }}</h6>
+                      <p class="menu-description">{{ item.description || 'No description' }}</p>
+                    </div>
+                    <strong class="menu-price">{{ item.price | number }} Tsh</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

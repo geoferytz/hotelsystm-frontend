@@ -1,0 +1,50 @@
+.shared-form {
+  width: 100%;
+}
+
+.shared-form-title {
+  color: var(--royal-green-dark, #064e3b);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.stacked-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-dark, #111827);
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.shared-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+@media (max-width: 768px) {
+  .shared-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .shared-form-actions .btn {
+    width: 100%;
+  }
+}

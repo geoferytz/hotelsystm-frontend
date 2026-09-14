@@ -1,0 +1,75 @@
+<!-- Session Lock Modal -->
+<div class="modal fade show d-block" *ngIf="isLocked" style="background: rgba(0,0,0,0.85); z-index: 9999;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content session-lock-modal">
+      <div class="modal-body p-0">
+        <div class="session-lock-header">
+          <div class="lock-animation">
+            <div class="lock-circle">
+              <i class="bi bi-shield-lock"></i>
+            </div>
+          </div>
+          <h3 class="lock-title">Session Locked</h3>
+          <p class="lock-subtitle">For your privacy and security</p>
+        </div>
+        
+        <div class="session-lock-content">
+          <p class="lock-message">Your session has been locked after inactivity. Enter your password to unlock and continue.</p>
+          
+          <form (ngSubmit)="unlockSession()">
+            <div class="password-input-group">
+              <div class="input-wrapper">
+                <i class="bi bi-lock input-icon"></i>
+                <input 
+                  type="password" 
+                  class="form-control password-input" 
+                  [(ngModel)]="password" 
+                  name="password" 
+                  placeholder="Enter your password"
+                  required
+                  (keyup.enter)="unlockSession()"
+                >
+                <button class="toggle-password" type="button" (click)="togglePasswordVisibility()">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="error-message" *ngIf="errorMessage">
+                <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button type="submit" class="btn btn-primary unlock-btn">
+                <i class="bi bi-unlock"></i> Unlock Session
+              </button>
+              <button type="button" class="btn btn-outline-light logout-btn" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Session Warning Modal -->
+<div class="modal fade show d-block" *ngIf="showWarning" style="background: rgba(0,0,0,0.6); z-index: 9998;">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content session-warning-modal">
+      <div class="modal-body p-0">
+        <div class="warning-content">
+          <div class="warning-icon">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <h4 class="warning-title">Session Timeout Warning</h4>
+          <p class="warning-message">Your session will be locked in <span class="countdown">{{ lockCountdown }}</span> seconds due to inactivity.</p>
+          <p class="warning-hint">Move your mouse or press any key to continue your session.</p>
+          <button type="button" class="btn btn-primary continue-btn" (click)="dismissWarning()">
+            Continue Session
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

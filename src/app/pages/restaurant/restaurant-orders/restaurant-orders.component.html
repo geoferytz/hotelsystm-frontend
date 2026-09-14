@@ -1,0 +1,167 @@
+<div class="container-fluid py-4">
+  <div class="page-header">
+    <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Restaurant Menu Orders</h3>
+    <button class="btn btn-primary btn-split" (click)="openForm()">
+      <span class="btn-text">Add Order</span>
+      <span class="btn-divider"></span>
+      <span class="btn-icon"><i class="bi bi-receipt icon-spin"></i></span>
+    </button>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal fade show d-block" *ngIf="showForm" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header modal-header-animated">
+          <h5 class="modal-title">Add Menu Order</h5>
+          <button type="button" class="btn-close btn-close-animated" (click)="closeForm()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="submitForm()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Guest Name *</label>
+                <input type="text" class="form-control" [(ngModel)]="orderForm.guestName" name="guestName" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !orderForm.guestName">Guest name is required</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" [(ngModel)]="orderForm.guestEmail" name="guestEmail">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone *</label>
+              <input type="tel" class="form-control" [(ngModel)]="orderForm.guestPhone" name="guestPhone" required>
+              <div class="text-danger small" *ngIf="formSubmitted && !orderForm.guestPhone">Phone is required</div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Order Date *</label>
+                <input type="date" class="form-control" [(ngModel)]="orderForm.orderDate" name="orderDate" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !orderForm.orderDate">Order date is required</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Order Time *</label>
+                <input type="time" class="form-control" [(ngModel)]="orderForm.orderTime" name="orderTime" required>
+                <div class="text-danger small" *ngIf="formSubmitted && !orderForm.orderTime">Order time is required</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Order Type *</label>
+              <select class="form-select" [(ngModel)]="orderForm.orderType" name="orderType" required>
+                <option value="dine_in">Dine In</option>
+                <option value="takeaway">Takeaway</option>
+                <option value="delivery">Delivery</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Total Amount (Tsh) *</label>
+              <input type="number" class="form-control" [(ngModel)]="orderForm.totalAmount" name="totalAmount" min="0" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Special Requests</label>
+              <textarea class="form-control" [(ngModel)]="orderForm.specialRequests" name="specialRequests" rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading" class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Guest Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Special Requests</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of paginatedOrders">
+          <td>{{ order.id }}</td>
+          <td>{{ order.guestName }}</td>
+          <td>{{ order.guestEmail || '-' }}</td>
+          <td>{{ order.guestPhone }}</td>
+          <td>{{ order.orderDate }}</td>
+          <td>{{ order.orderTime }}</td>
+          <td>{{ getOrderTypeLabel(order.orderType) }}</td>
+          <td>{{ formatItems(order.items) }}</td>
+          <td>{{ order.totalAmount | number }} Tsh</td>
+          <td>{{ order.specialRequests || '-' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass(order.status)">
+              {{ order.status }}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-warning" (click)="updateStatus(order.id, 'pending')" title="Pending">
+                <i class="bi bi-clock"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-success" (click)="updateStatus(order.id, 'confirmed')" title="Confirmed">
+                <i class="bi bi-check-circle"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-primary" (click)="updateStatus(order.id, 'preparing')" title="Preparing">
+                <i class="bi bi-fire"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info" (click)="updateStatus(order.id, 'ready')" title="Ready">
+                <i class="bi bi-bell"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="updateStatus(order.id, 'completed')" title="Completed">
+                <i class="bi bi-check2-all"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="updateStatus(order.id, 'cancelled')" title="Cancelled">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="orders.length === 0">
+          <td colspan="12" class="text-center text-muted py-4">No menu orders found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-wrapper" *ngIf="!loading && orders.length > 0">
+    <div class="pagination-info">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, orders.length) }} of {{ orders.length }} entries
+    </div>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        </li>
+        <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+          <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

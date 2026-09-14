@@ -1,0 +1,101 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class="bi bi-cup-hot"></i> Meals &amp; Pricing</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">Add Meal</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<ng-template #mealImageTemplate let-row>
+  <img *ngIf="row.imageUrl" [src]="row.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + row.imageUrl : row.imageUrl" [alt]="row.name" class="meal-thumb">
+  <span *ngIf="!row.imageUrl" class="text-muted small">No image</span>
+</ng-template>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterCategory" (change)="load()">
+      <option value="">All Categories</option>
+      <option value="breakfast">Breakfast</option>
+      <option value="lunch">Lunch</option>
+      <option value="dinner">Dinner</option>
+      <option value="snack">Snack</option>
+      <option value="beverage">Beverage</option>
+      <option value="dessert">Dessert</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="mealColumns"
+  [data]="items"
+  [actions]="mealActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="items.length"
+  emptyMessage="No meals configured"
+  (pageChange)="changePage($event)"
+  (actionClick)="onMealTableAction($event)">
+</app-shared-table>
+
+<!-- Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="$event.stopPropagation()">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-cup-hot me-2"></i>{{ editing ? 'Edit' : 'Add' }} Meal</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="showModal = false">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label fw-semibold">Name *</label><input type="text" class="form-control" [(ngModel)]="form.name"></div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Hotel *</label>
+          <select class="form-select" [(ngModel)]="form.hotelId">
+            <option value="">All Hotels</option>
+            <option *ngFor="let hotel of hotels" [value]="hotel.id">{{ hotel.name }}</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category</label>
+          <select class="form-select" [(ngModel)]="form.category">
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snack">Snack</option>
+            <option value="beverage">Beverage</option>
+            <option value="dessert">Dessert</option>
+          </select>
+        </div>
+        <div class="mb-3"><label class="form-label fw-semibold">Price *</label><input type="number" class="form-control" [(ngModel)]="form.price" min="0" step="0.01"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea class="form-control" [(ngModel)]="form.description" rows="2"></textarea></div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Meal Image</label>
+          <input type="file" class="form-control" accept="image/*" (change)="onImageSelected($event)">
+          <small class="text-muted">Choose an image from your computer.</small>
+          <div class="meal-image-preview mt-2" *ngIf="form.imageUrl">
+            <img [src]="form.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + form.imageUrl : form.imageUrl" alt="Meal image preview">
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col-md-4 mb-3"><label class="form-label fw-semibold">Portion Size</label><input type="text" class="form-control" [(ngModel)]="form.portionSize" placeholder="Plate, Cup, 500ml"></div>
+          <div class="col-md-4 mb-3"><label class="form-label fw-semibold">Prep Time (min)</label><input type="number" class="form-control" [(ngModel)]="form.preparationTime" min="0"></div>
+          <div class="col-md-4 mb-3"><label class="form-label fw-semibold">Calories</label><input type="number" class="form-control" [(ngModel)]="form.calories" min="0"></div>
+        </div>
+        <div class="mb-3"><label class="form-label fw-semibold">Dietary Tags</label><input type="text" class="form-control" [(ngModel)]="form.dietaryTagsText" placeholder="Vegetarian, Spicy, Gluten-Free"></div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="form.isAvailable" id="isAvailable">
+          <label class="form-check-label" for="isAvailable">Available</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+        <button class="btn btn-primary" (click)="save()" [disabled]="uploadingImage">
+          <span *ngIf="uploadingImage" class="spinner-border spinner-border-sm me-2"></span>
+          {{ uploadingImage ? 'Uploading...' : (editing ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

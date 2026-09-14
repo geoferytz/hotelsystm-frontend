@@ -1,0 +1,110 @@
+<div class="food-requests-page">
+  <div class="page-header">
+    <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Food Requests</h3>
+    <div class="header-actions">
+      <button class="btn btn-primary btn-split" (click)="openForm()">
+        <span class="btn-text">Request Food</span>
+        <span class="btn-divider"></span>
+        <span class="btn-icon"><i class="bi bi-egg-fried icon-spin"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters mb-3">
+    <div class="row g-2">
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterStatus" (ngModelChange)="loadRequests()">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="preparing">Preparing</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="filterRoom" (ngModelChange)="loadRequests()">
+          <option value="">All Rooms</option>
+          <option *ngFor="let room of rooms" [value]="room.id">{{ room.roomNumber }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <app-shared-table
+    [columns]="requestColumns"
+    [data]="requests"
+    [actions]="requestActions"
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalItems]="requests.length"
+    emptyMessage="No food requests found"
+    (pageChange)="changePage($event)"
+    (actionClick)="onRequestTableAction($event)">
+  </app-shared-table>
+
+  <!-- Request Form Modal -->
+  <div class="modal fade show d-block" *ngIf="showForm" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header modal-header-animated">
+          <h5 class="modal-title">Request Food from Kitchen</h5>
+          <button type="button" class="btn-close btn-close-animated" (click)="closeForm()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="submitRequest()">
+            <div class="mb-3">
+              <label class="form-label">Room *</label>
+              <select class="form-select" [(ngModel)]="form.roomId" name="roomId" required>
+                <option value="">Select Room</option>
+                <option *ngFor="let room of rooms" [value]="room.id">{{ room.roomNumber }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Guest Name *</label>
+              <input type="text" class="form-control" [(ngModel)]="form.guestName" name="guestName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Food Items *</label>
+              <div class="food-items-container">
+                <div *ngFor="let item of form.items; let i = index" class="food-item-row">
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control" [(ngModel)]="item.name" name="itemName{{i}}" placeholder="Item name" required>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="number" class="form-control" [(ngModel)]="item.price" name="itemPrice{{i}}" placeholder="Price" required>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="number" class="form-control" [(ngModel)]="item.quantity" name="itemQty{{i}}" placeholder="Quantity" required>
+                    </div>
+                    <div class="col-md-2">
+                      <button type="button" class="btn btn-danger btn-sm" (click)="removeItem(i)" *ngIf="form.items.length > 1">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm mt-2" (click)="addItem()">
+                  <i class="bi bi-plus"></i> Add Item
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Total Amount</label>
+              <div class="form-control bg-light">{{ calculateTotal() | number }} Tsh</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" [(ngModel)]="form.notes" name="notes" rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit Request</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

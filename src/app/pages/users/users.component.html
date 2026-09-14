@@ -1,0 +1,125 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> User Management</h3>
+  <button class="btn btn-primary btn-split" *ngIf="canCreate()" (click)="openModal()">
+    <span class="btn-text">Add User</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-2">
+    <select class="form-select" [(ngModel)]="filterRole" (change)="loadUsers()">
+      <option value="">All Roles</option>
+      <option value="admin">Admin</option>
+      <option value="receptionist">Receptionist</option>
+      <option value="staff">Staff</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select class="form-select" [(ngModel)]="filterActive" (change)="loadUsers()">
+      <option value="">All</option>
+      <option value="true">Active</option>
+      <option value="false">Inactive</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="userColumns"
+  [data]="users"
+  [actions]="userActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="users.length"
+  emptyMessage="No users found"
+  (pageChange)="changePage($event)"
+  (actionClick)="onUserTableAction($event)">
+</app-shared-table>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="closeModals()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>{{ editing ? 'Edit User' : 'Add User' }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModals()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Full Name *</label>
+          <input type="text" class="form-control" [(ngModel)]="form.fullName">
+        </div>
+        <div class="mb-3" *ngIf="!editing">
+          <label class="form-label fw-semibold">Username *</label>
+          <input type="text" class="form-control" [(ngModel)]="form.username">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email *</label>
+          <input type="email" class="form-control" [(ngModel)]="form.email">
+        </div>
+        <div class="mb-3" *ngIf="!editing">
+          <label class="form-label fw-semibold">Password *</label>
+          <input type="password" class="form-control" [(ngModel)]="form.password">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Role *</label>
+          <select class="form-select" [(ngModel)]="form.roleId" (ngModelChange)="syncRoleName()">
+            <option [ngValue]="null">Select Role</option>
+            <option *ngFor="let r of roles" [ngValue]="r.id">{{ r.name }}</option>
+          </select>
+          <input type="hidden" [(ngModel)]="form.role">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveUser()">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" [class.show]="showPasswordModal" [style.display]="showPasswordModal ? 'block' : 'none'" tabindex="-1" (click)="closeModals()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-key me-2"></i>Change Password — {{ passwordUser?.fullName }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModals()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">New Password *</label>
+          <input type="password" class="form-control" [(ngModel)]="newPassword" placeholder="Min 6 characters">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Confirm Password *</label>
+          <input type="password" class="form-control" [(ngModel)]="confirmPassword">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModals()">Cancel</button>
+        <button class="btn btn-warning" (click)="changePassword()">Change Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="showModal || showPasswordModal"></div>
+
+<!-- Delete Confirmation Dialog -->
+<app-confirm-dialog
+  [isOpen]="showConfirmDialog"
+  title="Delete User"
+  message="Are you sure you want to delete this user? This action cannot be undone and will permanently remove the user from the system."
+  confirmText="Delete"
+  cancelText="Cancel"
+  type="danger"
+  icon="bi-exclamation-triangle"
+  (confirm)="onConfirmDelete()"
+  (cancel)="onCancelDelete()">
+</app-confirm-dialog>

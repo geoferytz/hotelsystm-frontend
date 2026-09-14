@@ -1,0 +1,98 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> Work Shifts</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">New Shift</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterStatus" (change)="loadShifts()">
+      <option value="">All Statuses</option>
+      <option value="scheduled">Scheduled</option>
+      <option value="in-progress">In Progress</option>
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <input type="date" class="form-control" [(ngModel)]="filterDate" (change)="loadShifts()" placeholder="Filter by date">
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="shiftColumns"
+  [data]="shifts"
+  [actions]="shiftActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="shifts.length"
+  emptyMessage="No shifts found"
+  (pageChange)="changePage($event)"
+  (actionClick)="onShiftTableAction($event)">
+</app-shared-table>
+
+<!-- Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="closeModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-clock me-2"></i>{{ editing ? 'Edit Shift' : 'New Shift' }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Staff Member</label>
+          <select class="form-select" [(ngModel)]="form.userId">
+            <option value="">Select staff...</option>
+            <option *ngFor="let u of users" [value]="u.id">{{ u.username }} ({{ u.role }})</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Shift Type</label>
+          <select class="form-select" [(ngModel)]="form.shiftType">
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="night">Night</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Date</label>
+          <input type="date" class="form-control" [(ngModel)]="form.date">
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Start Time</label>
+            <input type="time" class="form-control" [(ngModel)]="form.startTime">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">End Time</label>
+            <input type="time" class="form-control" [(ngModel)]="form.endTime">
+          </div>
+        </div>
+        <div class="mb-3" *ngIf="editing">
+          <label class="form-label fw-semibold">Status</label>
+          <select class="form-select" [(ngModel)]="form.status">
+            <option value="scheduled">Scheduled</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea class="form-control" [(ngModel)]="form.notes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="saveShift()">{{ editing ? 'Update' : 'Create' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>

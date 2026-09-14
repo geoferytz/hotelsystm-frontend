@@ -1,0 +1,21 @@
+<div class="city-selector">
+  <div class="city-input" (click)="toggleDropdown()">
+    <i class="bi bi-geo-alt"></i>
+    <span>{{ displayValue }}</span>
+    <i class="bi bi-chevron-down" *ngIf="!isOpen"></i>
+    <i class="bi bi-chevron-up" *ngIf="isOpen"></i>
+  </div>
+
+  <div *ngIf="isOpen" class="city-dropdown" (click)="$event.stopPropagation()">
+    <div class="city-item" (click)="clearCity()">
+      <i class="bi bi-globe"></i>
+      <span>All Cities</span>
+      <i class="bi bi-check" *ngIf="!selectedCity"></i>
+    </div>
+    <div *ngFor="let city of cities" class="city-item" (click)="selectCity(city)">
+      <i class="bi bi-geo-alt"></i>
+      <span>{{ city }}</span>
+      <i class="bi bi-check" *ngIf="selectedCity === city"></i>
+    </div>
+  </div>
+</div>

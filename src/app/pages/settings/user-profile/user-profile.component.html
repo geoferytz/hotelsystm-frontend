@@ -1,0 +1,58 @@
+<div class="user-profile-page">
+  <div class="page-header">
+    <h3><i class="bi bi-person-circle me-2"></i>User Profile</h3>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+      <div class="profile-info">
+        <h4>{{ user?.fullName || 'User' }}</h4>
+        <span class="badge bg-primary">{{ user?.role | uppercase }}</span>
+      </div>
+    </div>
+
+    <div class="profile-form">
+      <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>Profile updated successfully!
+        <button type="button" class="btn-close" (click)="success = false"></button>
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+      </div>
+
+      <form (ngSubmit)="saveProfile()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" [(ngModel)]="form.fullName" name="fullName" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="form.email" name="email" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-control" [(ngModel)]="form.phone" name="phone">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-control" [(ngModel)]="form.address" name="address">
+          </div>
+        </div>
+
+        <div class="form-actions mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="saving">
+            <i class="bi bi-save me-2" *ngIf="!saving"></i>
+            <i class="bi bi-arrow-repeat me-2 spin" *ngIf="saving"></i>
+            {{ saving ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

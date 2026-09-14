@@ -1,0 +1,130 @@
+<div class="page-header">
+  <h3><i class="bi bi-person-lines-fill"></i> Customer Details</h3>
+  <button class="btn btn-outline-secondary" routerLink="/customers"><i class="bi bi-arrow-left"></i> Back</button>
+</div>
+
+<div *ngIf="customer" class="row g-4">
+  <!-- Customer Info -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Guest Information</div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ customer.fullName }}</p>
+        <p><strong>Phone:</strong> {{ customer.phone }}</p>
+        <p><strong>Email:</strong> {{ customer.email || '-' }}</p>
+        <p><strong>ID Number:</strong> {{ customer.idNumber || '-' }}</p>
+        <p><strong>Nationality:</strong> {{ customer.nationality || '-' }}</p>
+        <p><strong>Address:</strong> {{ customer.address || '-' }}</p>
+        <p><strong>Belongings:</strong> {{ customer.belongings || '-' }}</p>
+        <p><strong>Registered:</strong> {{ customer.createdAt | date:'mediumDate' }}</p>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="card mt-3">
+      <div class="card-header bg-white fw-semibold">Summary</div>
+      <div class="card-body">
+        <p><strong>Total Stays:</strong> {{ bookings.length }}</p>
+        <p><strong>Active Stays:</strong> {{ bookings | activeStays }}</p>
+        <p><strong>Total Billed:</strong> {{ totalBilled | number }} Tsh</p>
+        <p><strong>Total Paid:</strong> {{ totalPaid | number }} Tsh</p>
+        <p><strong>Outstanding:</strong> <span [class.text-danger]="totalBilled - totalPaid > 0">{{ totalBilled - totalPaid | number }} Tsh</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookings & Billing -->
+  <div class="col-md-8">
+    <!-- Stays -->
+    <div class="card mb-4">
+      <div class="card-header bg-white fw-semibold">Stay History</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of bookings">
+              <td>{{ b.Room?.roomNumber }} ({{ b.Room?.type }})</td>
+              <td>{{ b.checkIn }}</td>
+              <td>{{ b.checkOut }}</td>
+              <td><span class="badge" [ngClass]="'badge-' + b.status">{{ b.status }}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-info me-1" *ngIf="b.status === 'checked-in'" (click)="openExtendModal(b)" title="Extend">
+                  <i class="bi bi-calendar-plus"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="bookings.length === 0">
+              <td colspan="5" class="text-center text-muted py-3">No stays found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Payment History</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Room</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Status</th>
+              <th>Method</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bl of billings">
+              <td>#{{ bl.id }}</td>
+              <td>{{ bl.Booking?.Room?.roomNumber || '-' }}</td>
+              <td class="fw-semibold">{{ bl.totalAmount | number }} Tsh</td>
+              <td>{{ bl.paidAmount | number }} Tsh</td>
+              <td><span class="badge" [ngClass]="'badge-' + bl.paymentStatus">{{ bl.paymentStatus }}</span></td>
+              <td>{{ bl.paymentMethod || '-' }}</td>
+            </tr>
+            <tr *ngIf="billings.length === 0">
+              <td colspan="6" class="text-center text-muted py-3">No payments found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Extend Modal -->
+<div class="modal fade" [class.show]="showExtendModal" [style.display]="showExtendModal ? 'block' : 'none'" tabindex="-1" (click)="showExtendModal = false">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-calendar-plus me-2"></i>Extend Stay — Room {{ extendBooking?.Room?.roomNumber }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="showExtendModal = false">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Current check-out: <strong>{{ extendBooking?.checkOut }}</strong></p>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">New Check-Out Date</label>
+          <input type="date" class="form-control" [(ngModel)]="newCheckOut">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showExtendModal = false">Cancel</button>
+        <button class="btn btn-primary" (click)="submitExtend()">Extend</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showExtendModal"></div>

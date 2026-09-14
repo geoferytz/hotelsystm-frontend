@@ -1,0 +1,19 @@
+<div *ngIf="isOpen" class="confirm-dialog-overlay">
+  <div class="confirm-dialog">
+    <div class="confirm-dialog-header">
+      <i class="bi" [ngClass]="iconClass"></i>
+      <h3>{{ title }}</h3>
+    </div>
+    <div class="confirm-dialog-body">
+      <p>{{ message }}</p>
+    </div>
+    <div class="confirm-dialog-footer">
+      <button class="btn btn-cancel" (click)="onCancel()">
+        <i class="bi bi-x-lg"></i> {{ cancelText }}
+      </button>
+      <button class="btn btn-confirm" [ngClass]="typeClass" (click)="onConfirm()">
+        <i class="bi bi-check-lg"></i> {{ confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

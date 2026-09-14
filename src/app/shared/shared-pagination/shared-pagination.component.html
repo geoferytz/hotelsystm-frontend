@@ -1,0 +1,25 @@
+<div class="shared-pagination" *ngIf="totalItems > 0">
+  <div class="pagination-info" *ngIf="showInfo">
+    Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} records
+  </div>
+
+  <div class="pagination-controls">
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goToPage(currentPage - 1)" [disabled]="disabled || currentPage === 1">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <button type="button" class="btn btn-outline-primary btn-sm" *ngIf="showFirstPage" (click)="goToPage(1)" [disabled]="disabled">1</button>
+    <span class="pagination-ellipsis" *ngIf="showStartEllipsis">...</span>
+
+    <button type="button" class="btn btn-outline-primary btn-sm" *ngFor="let page of pages" (click)="goToPage(page)" [class.active]="page === currentPage" [disabled]="disabled">
+      {{ page }}
+    </button>
+
+    <span class="pagination-ellipsis" *ngIf="showEndEllipsis">...</span>
+    <button type="button" class="btn btn-outline-primary btn-sm" *ngIf="showLastPage" (click)="goToPage(totalPages)" [disabled]="disabled">{{ totalPages }}</button>
+
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goToPage(currentPage + 1)" [disabled]="disabled || currentPage === totalPages">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+</div>

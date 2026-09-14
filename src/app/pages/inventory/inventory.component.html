@@ -1,0 +1,268 @@
+<div class="inventory-page" *ngIf="canView()">
+  <div class="page-header">
+    <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> Inventory Management</h3>
+    <div class="header-actions">
+      <!-- <a class="btn btn-primary btn-split" routerLink="/inventory/categories" *ngIf="canCreate()">
+        <span class="btn-text">Categories</span>
+        <span class="btn-divider"></span>
+        <span class="btn-icon"><i class="bi bi-folder icon-spin"></i></span>
+      </a> -->
+      <button class="btn btn-primary btn-split" (click)="openModal()" *ngIf="canCreate()">
+        <span class="btn-text">Add Item</span>
+        <span class="btn-divider"></span>
+        <span class="btn-icon"><i class="bi bi-box icon-spin"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="restaurant-tabs mb-3">
+    <button class="tab-btn" [class.active]="activeTab === 'items'" (click)="activeTab = 'items'"><i class="bi bi-box"></i> Items</button>
+    <button class="tab-btn" [class.active]="activeTab === 'summary'" (click)="activeTab = 'summary'"><i class="bi bi-bar-chart"></i> Stock Summary</button>
+  </div>
+
+  <!-- Items Tab -->
+  <div *ngIf="activeTab === 'items'">
+    <!-- Filters -->
+    <div class="filters mb-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="filterCategory" (ngModelChange)="loadItems()">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="lowStock" [(ngModel)]="filterLowStock" (ngModelChange)="loadItems()">
+            <label class="form-check-label" for="lowStock">Low Stock Only</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <app-shared-table
+      [columns]="inventoryColumns"
+      [data]="items"
+      [actions]="inventoryActions"
+      [currentPage]="currentPage"
+      [itemsPerPage]="itemsPerPage"
+      [totalItems]="items.length"
+      emptyMessage="No items found"
+      (pageChange)="changePage($event)"
+      (actionClick)="onInventoryTableAction($event)">
+    </app-shared-table>
+  </div>
+
+  <!-- Stock Summary Tab -->
+  <div *ngIf="activeTab === 'summary'">
+    <div class="table-container">
+      <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Current Stock</th>
+            <th>Min Level</th>
+            <th>Max Level</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of stockSummary; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.Category?.name || '-' }}</td>
+            <td>{{ item.currentStock || 0 }}</td>
+            <td>{{ item.minStockLevel }}</td>
+            <td>{{ item.maxStockLevel || '-' }}</td>
+            <td>
+              <span [class]="getStockStatusClass(item.status)">
+                {{ item.status | uppercase }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-success" (click)="openStockModal(item)" *ngIf="canCreate()" title="Adjust Stock">
+                  <i class="bi bi-sliders"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="stockSummary.length === 0"><td colspan="8" class="text-center text-muted py-4">No stock data available</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Item Modal -->
+  <div class="modal fade show d-block inventory-item-modal" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content inventory-modal-card">
+        <div class="modal-header modal-header-animated inventory-modal-header">
+          <div>
+            <h5 class="modal-title"><i class="bi bi-box-seam me-2"></i>{{ editing ? 'Edit Item' : 'Add New Item' }}</h5>
+            <small>{{ editing ? 'Update inventory item information' : 'Create a new inventory item with stock thresholds' }}</small>
+          </div>
+          <button type="button" class="btn-close btn-close-animated" (click)="closeModal()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="modal-body inventory-modal-body">
+          <form>
+            <div class="form-section-card">
+              <div class="form-section-title"><i class="bi bi-info-circle"></i> Basic Information</div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold"><i class="bi bi-tag me-1"></i>Name *</label>
+                  <input type="text" class="form-control" [(ngModel)]="form.name" name="name" placeholder="Enter item name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold"><i class="bi bi-upc-scan me-1"></i>SKU</label>
+                  <input type="text" class="form-control" [(ngModel)]="form.sku" name="sku" placeholder="Enter item SKU">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold"><i class="bi bi-folder me-1"></i>Category</label>
+                  <select class="form-select" [(ngModel)]="form.categoryId" name="categoryId">
+                    <option [ngValue]="null">Select Category</option>
+                    <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold"><i class="bi bi-rulers me-1"></i>Unit *</label>
+                  <select class="form-select" [(ngModel)]="form.unit" name="unit">
+                    <option value="piece">Piece</option>
+                    <option value="kg">Kilogram</option>
+                    <option value="liter">Liter</option>
+                    <option value="box">Box</option>
+                    <option value="pack">Pack</option>
+                    <option value="meter">Meter</option>
+                    <option value="roll">Roll</option>
+                    <option value="bottle">Bottle</option>
+                    <option value="set">Set</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section-card">
+              <div class="form-section-title"><i class="bi bi-graph-up-arrow"></i> Pricing & Stock Levels</div>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold"><i class="bi bi-cash me-1"></i>Unit Price *</label>
+                  <input type="number" class="form-control" [(ngModel)]="form.unitPrice" name="unitPrice" step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold"><i class="bi bi-arrow-down-circle me-1"></i>Min Stock *</label>
+                  <input type="number" class="form-control" [(ngModel)]="form.minStockLevel" name="minStockLevel" min="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold"><i class="bi bi-arrow-up-circle me-1"></i>Max Stock</label>
+                  <input type="number" class="form-control" [(ngModel)]="form.maxStockLevel" name="maxStockLevel" min="0">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold"><i class="bi bi-bell me-1"></i>Reorder *</label>
+                  <input type="number" class="form-control" [(ngModel)]="form.reorderPoint" name="reorderPoint" min="0">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section-card mb-0">
+              <div class="form-section-title"><i class="bi bi-card-text"></i> Description</div>
+              <textarea class="form-control" [(ngModel)]="form.description" name="description" rows="3" placeholder="Add item description, notes, or usage details"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer inventory-modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveItem()"><i class="bi bi-check-circle me-1"></i>{{ editing ? 'Update Item' : 'Save Item' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal fade show d-block" *ngIf="showCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header modal-header-animated">
+          <h5 class="modal-title">Add Category</h5>
+          <button type="button" class="btn-close btn-close-animated" (click)="showCategoryModal = false"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Name *</label>
+              <input type="text" class="form-control" [(ngModel)]="categoryForm.name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" [(ngModel)]="categoryForm.description" name="description" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="showCategoryModal = false">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveCategory()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stock Movement Modal -->
+  <div class="modal fade show d-block" *ngIf="showStockModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header modal-header-animated">
+          <h5 class="modal-title">Adjust Stock</h5>
+          <button type="button" class="btn-close btn-close-animated" (click)="showStockModal = false"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Movement Type *</label>
+              <select class="form-select" [(ngModel)]="stockForm.movementType" name="movementType">
+                <option value="in">Stock In</option>
+                <option value="out">Stock Out</option>
+                <option value="adjustment">Adjustment</option>
+                <option value="transfer">Transfer</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantity *</label>
+              <input type="number" class="form-control" [(ngModel)]="stockForm.quantity" name="quantity" min="1">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Reference</label>
+              <input type="text" class="form-control" [(ngModel)]="stockForm.reference" name="reference" placeholder="e.g., PO-12345">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" [(ngModel)]="stockForm.notes" name="notes" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="showStockModal = false">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="saveStockMovement()">Record</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog -->
+  <app-confirm-dialog
+    [isOpen]="showConfirmDialog"
+    title="Confirm Delete"
+    message="Are you sure you want to delete this item?"
+    (confirm)="deleteItemId ? onConfirmDelete() : onConfirmDeleteCategory()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-dialog>
+</div>
+
+<div class="alert alert-warning" *ngIf="!canView()">
+  <i class="bi bi-exclamation-triangle"></i> You don't have permission to view this page.
+</div>

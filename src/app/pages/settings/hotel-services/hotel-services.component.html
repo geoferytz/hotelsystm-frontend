@@ -1,0 +1,89 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class="bi bi-stars"></i> Hotel Services &amp; Pricing</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">Add Service</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<ng-template #serviceImageTemplate let-row>
+  <img *ngIf="row.imageUrl" [src]="row.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + row.imageUrl : row.imageUrl" [alt]="row.name" class="service-thumb">
+  <span *ngIf="!row.imageUrl" class="text-muted small">No image</span>
+</ng-template>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterCategory" (change)="load()">
+      <option value="">All Categories</option>
+      <option value="amenity">Amenity</option>
+      <option value="transport">Transport</option>
+      <option value="spa">Spa</option>
+      <option value="laundry">Laundry</option>
+      <option value="event">Event</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="serviceColumns"
+  [data]="items"
+  [actions]="serviceActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="items.length"
+  emptyMessage="No services configured"
+  (pageChange)="changePage($event)"
+  (actionClick)="onServiceTableAction($event)">
+</app-shared-table>
+
+<!-- Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="$event.stopPropagation()">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title"><i class="bi bi-stars me-2"></i>{{ editing ? 'Edit' : 'Add' }} Service</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="showModal = false">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label fw-semibold">Name *</label><input type="text" class="form-control" [(ngModel)]="form.name"></div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category</label>
+          <select class="form-select" [(ngModel)]="form.category" (change)="onCategoryChange()">
+            <option value="amenity">Amenity</option>
+            <option value="transport">Transport</option>
+            <option value="spa">Spa</option>
+            <option value="laundry">Laundry</option>
+            <option value="event">Event</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="mb-3"><label class="form-label fw-semibold">Price *</label><input type="number" class="form-control" [(ngModel)]="form.price" min="0" step="0.01"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Icon (Bootstrap Icon class)</label><input type="text" class="form-control" [(ngModel)]="form.icon" placeholder="bi-wifi"></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea class="form-control" [(ngModel)]="form.description" rows="2"></textarea></div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Service Image</label>
+          <input type="file" class="form-control" accept="image/*" (change)="onImageSelected($event)">
+          <small class="text-muted">Choose an image from your computer.</small>
+          <div class="service-image-preview mt-2" *ngIf="form.imageUrl">
+            <img [src]="form.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + form.imageUrl : form.imageUrl" alt="Service image preview">
+          </div>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="form.isActive" id="isActive">
+          <label class="form-check-label" for="isActive">Active</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+        <button class="btn btn-primary" (click)="save()" [disabled]="uploadingImage">
+          <span *ngIf="uploadingImage" class="spinner-border spinner-border-sm me-2"></span>
+          {{ uploadingImage ? 'Uploading...' : (editing ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

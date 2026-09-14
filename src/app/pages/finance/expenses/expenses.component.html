@@ -1,0 +1,190 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> Expense Management</h3>
+  <button class="btn btn-primary btn-split" (click)="openModal()">
+    <span class="btn-text">New Expense</span>
+    <span class="btn-divider"></span>
+    <span class="btn-icon"><i class="bi bi-plus-lg icon-spin"></i></span>
+  </button>
+</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterCategory" (change)="loadExpenses()">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat | titlecase }}</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" [(ngModel)]="filterStatus" (change)="loadExpenses()">
+      <option value="">All Statuses</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
+    </select>
+  </div>
+</div>
+
+<app-shared-table
+  [columns]="expenseColumns"
+  [data]="expenses"
+  [actions]="expenseActions"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalItems]="expenses.length"
+  emptyMessage="No expenses found"
+  (pageChange)="changePage($event)"
+  (actionClick)="onExpenseTableAction($event)">
+</app-shared-table>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title">{{ editing ? 'Edit Expense' : 'New Expense' }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Category</label>
+              <select class="form-select" [(ngModel)]="form.category" name="category" required>
+                <option value="">Select Category</option>
+                <option *ngFor="let cat of categories" [value]="cat">{{ cat | titlecase }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Amount</label>
+              <input type="number" class="form-control" [(ngModel)]="form.amount" name="amount" required min="0" step="0.01">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" [(ngModel)]="form.description" name="description" required rows="3"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Expense Date</label>
+              <input type="date" class="form-control" [(ngModel)]="form.expenseDate" name="expenseDate" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Payment Method</label>
+              <select class="form-select" [(ngModel)]="form.paymentMethod" name="paymentMethod">
+                <option value="">Select Method</option>
+                <option *ngFor="let method of paymentMethods" [value]="method">{{ method | titlecase }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Vendor</label>
+              <input type="text" class="form-control" [(ngModel)]="form.vendor" name="vendor">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Receipt Number</label>
+              <input type="text" class="form-control" [(ngModel)]="form.receiptNumber" name="receiptNumber">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" [(ngModel)]="form.notes" name="notes" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveExpense()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header-animated">
+        <h5 class="modal-title">Expense Details #{{ selectedExpense?.id }}</h5>
+        <button type="button" class="btn-close btn-close-animated" (click)="closeDetailsModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedExpense">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Category</label>
+              <strong><i class="bi {{ getCategoryIcon(selectedExpense.category) }}"></i> {{ selectedExpense.category | titlecase }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Amount</label>
+              <strong>{{ selectedExpense.amount | number }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Status</label>
+              <span class="badge bg-{{ getStatusBadgeClass(selectedExpense.status) }}">{{ selectedExpense.status }}</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Expense Date</label>
+              <strong>{{ selectedExpense.expenseDate | date:'medium' }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Payment Method</label>
+              <strong><i class="bi {{ getMethodIcon(selectedExpense.paymentMethod) }}"></i> {{ selectedExpense.paymentMethod || '-' }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Vendor</label>
+              <strong>{{ selectedExpense.vendor || '-' }}</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-card">
+              <label>Receipt Number</label>
+              <strong>{{ selectedExpense.receiptNumber || '-' }}</strong>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="detail-card">
+              <label>Description</label>
+              <p>{{ selectedExpense.description }}</p>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="selectedExpense.notes">
+            <div class="detail-card">
+              <label>Notes</label>
+              <p>{{ selectedExpense.notes }}</p>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="selectedExpense.Approver">
+            <div class="detail-card">
+              <label>Approved By</label>
+              <strong>{{ selectedExpense.Approver?.fullName }} ({{ selectedExpense.Approver?.username }})</strong>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="selectedExpense.approvedAt">
+            <div class="detail-card">
+              <label>Approved At</label>
+              <strong>{{ selectedExpense.approvedAt | date:'medium' }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Close</button>
+        <button type="button" class="btn btn-success" (click)="approveExpense()" *ngIf="selectedExpense?.status === 'pending'">
+          <i class="bi bi-check-circle"></i> Approve
+        </button>
+        <button type="button" class="btn btn-danger" (click)="rejectExpense()" *ngIf="selectedExpense?.status === 'pending'">
+          <i class="bi bi-x-circle"></i> Reject
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

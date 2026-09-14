@@ -1,0 +1,101 @@
+<div class="page-header">
+  <h3><a routerLink="/home" class="back-arrow"><i class="bi bi-arrow-left"></i></a> <i class=""></i> Finance Module</h3>
+</div>
+
+<div class="finance-hero">
+  <div>
+    <span class="finance-kicker">Financial Management</span>
+    <h2>Manage hotel income, expenses, payments, refunds, and reports</h2>
+    <p>The Finance Module manages all financial transactions in the hotel, ensuring accurate tracking of income and expenses, and supporting decision-making through reports.</p>
+  </div>
+  <div class="finance-hero-icon">
+    <i class="bi bi-bank"></i>
+  </div>
+</div>
+
+<div class="finance-summary-grid">
+  <div class="summary-card income-card">
+    <div class="summary-icon"><i class="bi bi-arrow-down-circle"></i></div>
+    <div>
+      <span>Total Income</span>
+      <strong>Track revenue</strong>
+    </div>
+  </div>
+  <div class="summary-card payment-card">
+    <div class="summary-icon"><i class="bi bi-credit-card-2-front"></i></div>
+    <div>
+      <span>Guest Payments</span>
+      <strong>Manage payments</strong>
+    </div>
+  </div>
+  <div class="summary-card refund-card">
+    <div class="summary-icon"><i class="bi bi-arrow-return-left"></i></div>
+    <div>
+      <span>Refunds</span>
+      <strong>Handle reversals</strong>
+    </div>
+  </div>
+  <div class="summary-card expense-card">
+    <div class="summary-icon"><i class="bi bi-arrow-up-circle"></i></div>
+    <div>
+      <span>Expenses</span>
+      <strong>Monitor costs</strong>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-8">
+    <div class="finance-card">
+      <h5><i class="bi bi-bullseye"></i> Main Purpose</h5>
+      <div class="purpose-grid">
+        <div class="purpose-item" *ngFor="let item of purposes">
+          <div class="purpose-icon"><i class="bi" [ngClass]="item.icon"></i></div>
+          <div>
+            <h6>{{ item.title }}</h6>
+            <p>{{ item.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="finance-card h-100">
+      <h5><i class="bi bi-link-45deg"></i> Finance Sub Modules</h5>
+      <a class="quick-link" *ngFor="let link of quickLinks" [routerLink]="link.route">
+        <div class="quick-icon"><i class="bi" [ngClass]="link.icon"></i></div>
+        <div>
+          <strong>{{ link.label }}</strong>
+          <span>{{ link.text }}</span>
+        </div>
+        <i class="bi bi-chevron-right ms-auto"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="finance-card workflow-card">
+  <h5><i class="bi bi-diagram-3"></i> Finance Workflow</h5>
+  <div class="workflow-steps">
+    <div class="workflow-step">
+      <span>1</span>
+      <strong>Record Guest Charges</strong>
+      <p>Create invoices for rooms, services, food, drinks, and extra charges.</p>
+    </div>
+    <div class="workflow-step">
+      <span>2</span>
+      <strong>Receive Payments</strong>
+      <p>Update paid amount, payment method, and payment status.</p>
+    </div>
+    <div class="workflow-step">
+      <span>3</span>
+      <strong>Review Balances</strong>
+      <p>Monitor pending, partial, and paid invoices for financial control.</p>
+    </div>
+    <div class="workflow-step">
+      <span>4</span>
+      <strong>Generate Reports</strong>
+      <p>Use records to support management decisions and performance tracking.</p>
+    </div>
+  </div>
+</div>
