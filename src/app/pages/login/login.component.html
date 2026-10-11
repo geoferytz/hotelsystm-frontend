@@ -1,33 +1,42 @@
 <div class="login-container">
-  <div class="shape-1"></div>
-  <div class="shape-2"></div>
-  <div class="shape-3"></div>
+  <!-- Animated abstract shapes -->
+  <div class="abstract ring-1"></div>
+  <div class="abstract ring-2"></div>
+  <div class="abstract ring-3"></div>
+  <div class="abstract dot-1"></div>
+  <div class="abstract dot-2"></div>
+  <div class="abstract dot-3"></div>
+  <div class="abstract square-1"></div>
+  <div class="abstract square-2"></div>
+  <div class="abstract bar-1"></div>
+  <div class="abstract bar-2"></div>
+
+  <!-- Language toggle -->
+  <div class="lang-toggle">
+    <button type="button" [class.active]="langService.lang === 'en'" (click)="setLang('en')">EN</button>
+    <button type="button" [class.active]="langService.lang === 'sw'" (click)="setLang('sw')">SW</button>
+  </div>
+
   <div class="login-wrapper">
-    <!-- Info Card -->
-    <div class="info-card">
-      <div class="info-logo">
-        <img src="assets/images/NABO.png" alt="NABO Logo" class="info-logo-img">
-      </div>
-      <p class="subtitle">Hotel Management System</p>
-      <p class="description">
-        A comprehensive hotel management solution designed to streamline operations, 
-        manage bookings, track billing, and provide exceptional guest experiences. 
-        From room management to staff scheduling, HMS handles it all.
-      </p>
-      <div class="support-section">
-        <h4><i class="bi bi-headset me-2"></i>Need Support?</h4>
-        <p class="mb-2"><i class="bi bi-envelope me-2"></i>support&#64;hms.com</p>
-        <p class="mb-2"><i class="bi bi-telephone me-2"></i>+255 123 456 789</p>
-        <p><i class="bi bi-globe me-2"></i>www.hms.com</p>
+    <!-- Left: Brand -->
+    <div class="brand-side">
+      <img src="assets/images/NABO.png" alt="Logo" class="brand-logo">
+
+      <h2 class="brand-title">{{ t('appName') }}</h2>
+      <div class="brand-contact">
+        <span class="cis-contact-label">{{ t('contactUs') }}</span>
+        <p><i class="bi bi-envelope"></i> support&#64;hms.com</p>
+        <p><i class="bi bi-telephone"></i> +255 123 456 789</p>
+        
       </div>
     </div>
 
-    <!-- Login Form -->
-    <div class="login-card">
-      <div class="login-header">
-        <h3>Welcome Back</h3>
-        <p class="text-muted">Sign in to your account</p>
-      </div>
+    <div class="divider"></div>
+
+    <!-- Right: Login Form -->
+    <div class="form-side">
+      <h2 class="form-title">{{ t('welcome') }}</h2>
+      <p class="form-subtitle">{{ t('signInSubtitle') }}</p>
 
       <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ error }}
@@ -36,40 +45,40 @@
 
       <form (ngSubmit)="onLogin()">
         <div class="mb-3">
-          <label class="form-label fw-semibold">Username</label>
+          <label class="form-label fw-semibold">{{ t('username') }}</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-person"></i></span>
             <input type="text" class="form-control" [(ngModel)]="username" name="username"
-                   placeholder="Enter username" required>
+                   [placeholder]="t('enterUsername')" required>
           </div>
         </div>
 
         <div class="mb-4">
-          <label class="form-label fw-semibold">Password</label>
+          <label class="form-label fw-semibold">{{ t('password') }}</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-lock"></i></span>
             <input [type]="showPassword ? 'text' : 'password'" class="form-control" [(ngModel)]="password" name="password"
-                   placeholder="Enter password" required>
+                   [placeholder]="t('enterPassword')" required>
             <button type="button" class="input-group-text" (click)="togglePassword()" style="cursor: pointer;">
               <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" [disabled]="loading">
+        <button type="submit" class="btn btn-signin w-100 py-2 fw-semibold" [disabled]="loading">
           <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-          {{ loading ? 'Signing in...' : 'Sign In' }}
+          {{ loading ? t('signingIn') : t('signIn') }}
         </button>
       </form>
 
       <div class="text-center mt-3">
-        <a routerLink="/public/hotels" class="btn btn-outline-success w-100 py-2">
-          <i class="bi bi-person-walking"></i> Continue as Guest
+        <a routerLink="/public/hotels" class="btn btn-guest w-100 py-2">
+          <i class="bi bi-person-walking"></i> {{ t('continueAsGuest') }}
         </a>
       </div>
 
-      <p class="text-center text-muted mt-3 mb-0 small">
-        Default credentials: <strong>admin</strong> / <strong>admin123</strong>
+      <p class="default-creds">
+        {{ t('defaultCredentials') }} <strong>admin</strong> / <strong>admin123</strong>
       </p>
     </div>
   </div>

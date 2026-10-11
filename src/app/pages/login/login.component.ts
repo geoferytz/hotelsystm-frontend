@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { PermissionService } from '../../services/permission.service';
+import { LanguageService, Lang } from '../../services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -19,10 +20,23 @@ export class LoginComponent {
   loading = false;
   showPassword = false;
 
-  constructor(private authService: AuthService, private router: Router, private permission: PermissionService) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private permission: PermissionService,
+    public langService: LanguageService
+  ) {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/home']);
     }
+  }
+
+  t(key: string): string {
+    return this.langService.t(key);
+  }
+
+  setLang(lang: Lang): void {
+    this.langService.setLang(lang);
   }
 
   togglePassword(): void {
@@ -31,7 +45,7 @@ export class LoginComponent {
 
   onLogin(): void {
     if (!this.username || !this.password) {
-      this.error = 'Please enter username and password.';
+      this.error = this.t('errMissing');
       return;
     }
 
@@ -44,7 +58,7 @@ export class LoginComponent {
         this.router.navigate(['/home']);
       },
       error: (err: any) => {
-        this.error = err.error?.message || 'Login failed. Please try again.';
+        this.error = err.error?.message || this.t('errFailed');
         this.loading = false;
       },
     });

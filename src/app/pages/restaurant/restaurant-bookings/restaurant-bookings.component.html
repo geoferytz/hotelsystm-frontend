@@ -103,20 +103,25 @@
               {{ booking.status }}
             </span>
           </td>
-          <td>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-warning" (click)="updateStatus(booking.id, 'pending')" title="Pending">
-                <i class="bi bi-clock"></i>
+          <td class="text-end">
+            <div class="action-menu">
+              <button type="button" class="action-menu-toggle" (click)="toggleMenu(booking.id, 4, $event)" title="Actions">
+                <i class="bi bi-three-dots-vertical"></i>
               </button>
-              <button class="btn btn-sm btn-outline-success" (click)="updateStatus(booking.id, 'confirmed')" title="Confirmed">
-                <i class="bi bi-check-circle"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="updateStatus(booking.id, 'cancelled')" title="Cancelled">
-                <i class="bi bi-x-circle"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-info" (click)="updateStatus(booking.id, 'completed')" title="Completed">
-                <i class="bi bi-check2-all"></i>
-              </button>
+              <div class="action-menu-list" *ngIf="openMenuRow === booking.id" [style]="menuStyle">
+                <button type="button" class="action-menu-item item-warning" (click)="updateStatus(booking.id, 'pending')">
+                  <i class="bi bi-clock"></i> Pending
+                </button>
+                <button type="button" class="action-menu-item item-success" (click)="updateStatus(booking.id, 'confirmed')">
+                  <i class="bi bi-check-circle"></i> Confirmed
+                </button>
+                <button type="button" class="action-menu-item item-info" (click)="updateStatus(booking.id, 'completed')">
+                  <i class="bi bi-check2-all"></i> Completed
+                </button>
+                <button type="button" class="action-menu-item item-danger" (click)="updateStatus(booking.id, 'cancelled')">
+                  <i class="bi bi-x-circle"></i> Cancelled
+                </button>
+              </div>
             </div>
           </td>
         </tr>

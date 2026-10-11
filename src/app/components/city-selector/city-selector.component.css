@@ -16,7 +16,7 @@
 }
 
 .city-input:hover {
-  border-color: #008080;
+  border-color: #10367D;
 }
 
 .city-input span {
@@ -83,5 +83,5 @@
 
 .city-item i:last-child {
   font-size: 1.1rem;
-  color: #008080;
+  color: #10367D;
 }

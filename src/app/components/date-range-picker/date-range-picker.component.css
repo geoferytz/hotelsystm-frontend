@@ -17,7 +17,7 @@
 }
 
 .date-input:hover {
-  border-color: #008080;
+  border-color: #10367D;
 }
 
 .date-input span {
@@ -47,7 +47,7 @@
   z-index: 9999;
   overflow: visible;
   min-width: 350px;
-  border: 2px solid #008080;
+  border: 2px solid #10367D;
 }
 
 .calendar-dropdown.hidden {
@@ -117,17 +117,17 @@
 }
 
 .calendar-day.selected {
-  background: #008080;
+  background: #10367D;
   color: white;
   font-weight: 600;
 }
 
 .calendar-day.in-range {
-  background: #e0f2f1;
+  background: #EBEBEB;
 }
 
 .calendar-day.hovered {
-  background: #b2dfdb;
+  background: #b8d4ea;
 }
 
 .calendar-day.disabled {

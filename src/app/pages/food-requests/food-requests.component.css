@@ -24,7 +24,7 @@
 }
 
 .back-arrow:hover {
-  color: var(--royal-primary, #008080);
+  color: var(--royal-green, #10367D);
 }
 
 .header-actions {

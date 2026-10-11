@@ -52,7 +52,7 @@ export class PublicHotelsComponent implements OnInit {
   adults = 2;
   children = 0;
   rooms = 1;
-  currentTheme = 'green';
+  currentTheme = 'navy';
   showThemePicker = false;
   themes: any[] = [];
   unreadCount = 0;
@@ -157,7 +157,7 @@ export class PublicHotelsComponent implements OnInit {
   imageUrl(url: string | undefined): string {
     if (!url) return '';
     let normalized = url.replace(/\\/g, '/');
-    if (normalized.startsWith('/uploads')) return `http://localhost:5000${normalized}`;
+    if (normalized.startsWith('/uploads')) return normalized;
     if (!normalized.startsWith('/') && !normalized.startsWith('http')) {
       normalized = '/' + normalized;
     }

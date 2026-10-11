@@ -20,13 +20,15 @@ import { SessionLockComponent } from '../components/session-lock/session-lock.co
 export class LayoutComponent implements OnInit, OnDestroy {
   user;
   unreadCount = 0;
-  currentTheme = 'green';
+  currentTheme = 'navy';
   showThemePicker = false;
   showUserMenu = false;
+  showHotelMenu = false;
   themes: any[] = [];
   hotels: Hotel[] = [];
   selectedHotelId: number | null = null;
   activeCategory: string | null = null;
+  mobileSidebarOpen = false;
   private pollTimer: any;
   private clickHandler: any;
 
@@ -59,6 +61,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
       }
       if (!target.closest('.user-menu')) {
         this.showUserMenu = false;
+      }
+      if (!target.closest('.topbar-hotel-switcher')) {
+        this.showHotelMenu = false;
       }
     };
     document.addEventListener('click', this.clickHandler);
@@ -101,6 +106,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
+  toggleMobileSidebar(): void {
+    this.mobileSidebarOpen = !this.mobileSidebarOpen;
+  }
+
+  closeMobileSidebar(): void {
+    this.mobileSidebarOpen = false;
+  }
+
   setTheme(themeKey: string): void {
     this.themeService.setTheme(themeKey);
     this.showThemePicker = false;
@@ -126,7 +139,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  get selectedHotelName(): string {
+    if (this.selectedHotelId === null) return 'All Hotels';
+    return this.hotels.find(h => h.id === Number(this.selectedHotelId))?.name || 'All Hotels';
+  }
+
   switchHotel(hotelId: any): void {
+    this.showHotelMenu = false;
     if (hotelId === null) {
       // All Hotels selected - clear selection
       this.hotelService.selectHotel(null as any);

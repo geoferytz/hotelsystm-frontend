@@ -115,26 +115,31 @@
               {{ order.status }}
             </span>
           </td>
-          <td>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-warning" (click)="updateStatus(order.id, 'pending')" title="Pending">
-                <i class="bi bi-clock"></i>
+          <td class="text-end">
+            <div class="action-menu">
+              <button type="button" class="action-menu-toggle" (click)="toggleMenu(order.id, 6, $event)" title="Actions">
+                <i class="bi bi-three-dots-vertical"></i>
               </button>
-              <button class="btn btn-sm btn-outline-success" (click)="updateStatus(order.id, 'confirmed')" title="Confirmed">
-                <i class="bi bi-check-circle"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-primary" (click)="updateStatus(order.id, 'preparing')" title="Preparing">
-                <i class="bi bi-fire"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-info" (click)="updateStatus(order.id, 'ready')" title="Ready">
-                <i class="bi bi-bell"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-secondary" (click)="updateStatus(order.id, 'completed')" title="Completed">
-                <i class="bi bi-check2-all"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="updateStatus(order.id, 'cancelled')" title="Cancelled">
-                <i class="bi bi-x-circle"></i>
-              </button>
+              <div class="action-menu-list" *ngIf="openMenuRow === order.id" [style]="menuStyle">
+                <button type="button" class="action-menu-item item-warning" (click)="updateStatus(order.id, 'pending')">
+                  <i class="bi bi-clock"></i> Pending
+                </button>
+                <button type="button" class="action-menu-item item-success" (click)="updateStatus(order.id, 'confirmed')">
+                  <i class="bi bi-check-circle"></i> Confirmed
+                </button>
+                <button type="button" class="action-menu-item" (click)="updateStatus(order.id, 'preparing')">
+                  <i class="bi bi-fire"></i> Preparing
+                </button>
+                <button type="button" class="action-menu-item item-info" (click)="updateStatus(order.id, 'ready')">
+                  <i class="bi bi-bell"></i> Ready
+                </button>
+                <button type="button" class="action-menu-item" (click)="updateStatus(order.id, 'completed')">
+                  <i class="bi bi-check2-all"></i> Completed
+                </button>
+                <button type="button" class="action-menu-item item-danger" (click)="updateStatus(order.id, 'cancelled')">
+                  <i class="bi bi-x-circle"></i> Cancelled
+                </button>
+              </div>
             </div>
           </td>
         </tr>

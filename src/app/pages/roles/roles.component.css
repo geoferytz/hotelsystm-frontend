@@ -31,8 +31,8 @@
 }
 
 .module-tab.active {
-  background: #008080;
-  border-color: #008080;
+  background: #10367D;
+  border-color: #10367D;
   color: white;
 }
 
@@ -68,7 +68,7 @@
 .permission-card-header h6 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #008080;
+  color: #10367D;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -81,7 +81,7 @@
 .select-all-btn {
   padding: 4px 8px;
   font-size: 0.8rem;
-  color: #008080;
+  color: #10367D;
   text-decoration: none;
 }
 
@@ -111,7 +111,7 @@
   height: 18px;
   margin-top: 2px;
   cursor: pointer;
-  accent-color: #008080;
+  accent-color: #10367D;
 }
 
 .permission-item .form-check-label {

@@ -8,7 +8,7 @@
 </div>
 
 <ng-template #mealImageTemplate let-row>
-  <img *ngIf="row.imageUrl" [src]="row.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + row.imageUrl : row.imageUrl" [alt]="row.name" class="meal-thumb">
+  <img *ngIf="row.imageUrl" [src]="row.imageUrl" [alt]="row.name" class="meal-thumb">
   <span *ngIf="!row.imageUrl" class="text-muted small">No image</span>
 </ng-template>
 
@@ -75,7 +75,7 @@
           <input type="file" class="form-control" accept="image/*" (change)="onImageSelected($event)">
           <small class="text-muted">Choose an image from your computer.</small>
           <div class="meal-image-preview mt-2" *ngIf="form.imageUrl">
-            <img [src]="form.imageUrl.startsWith('/uploads') ? 'http://localhost:5000' + form.imageUrl : form.imageUrl" alt="Meal image preview">
+            <img [src]="form.imageUrl" alt="Meal image preview">
           </div>
         </div>
         <div class="row g-2">

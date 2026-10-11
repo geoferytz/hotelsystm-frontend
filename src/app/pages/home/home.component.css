@@ -4,8 +4,8 @@
   display: flex;
   flex-direction: column;
   background:
-    linear-gradient(rgba(246, 250, 247, 0.88), rgba(246, 250, 247, 0.94)),
-    url('/assets/images/NABOO.png') center 42% / min(72vw, 780px) auto no-repeat,
+    linear-gradient(rgba(235, 235, 235, 0.88), rgba(235, 235, 235, 0.94)),
+    url('/assets/images/bl.png') center 42% / min(72vw, 780px) auto no-repeat,
     var(--off-white);
   position: relative;
 }
@@ -16,8 +16,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 18% 18%, rgba(0, 128, 128, 0.12), transparent 28%),
-    radial-gradient(circle at 88% 78%, rgba(32, 178, 170, 0.16), transparent 32%);
+    radial-gradient(circle at 18% 18%, rgba(16, 54, 125, 0.12), transparent 28%),
+    radial-gradient(circle at 88% 78%, rgba(116, 180, 217, 0.16), transparent 32%);
   z-index: 0;
 }
 
@@ -31,7 +31,7 @@ app-footer {
 :host-context(:root[data-theme='dark']) .home-page {
   background:
     linear-gradient(rgba(2, 6, 23, 0.82), rgba(2, 6, 23, 0.92)),
-    url('/assets/images/NABOO.png') center 42% / min(72vw, 780px) auto no-repeat,
+    url('/assets/images/bl.png') center 42% / min(72vw, 780px) auto no-repeat,
     var(--off-white);
 }
 
@@ -139,16 +139,16 @@ app-footer {
 
 /* ===== Header ===== */
 .home-header {
-  background: var(--white);
-  border-bottom: 1px solid var(--border-color);
-  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, var(--royal-green-dark) 0%, var(--royal-green) 60%, var(--royal-green-light) 150%);
+  border-bottom: 3px solid var(--royal-green-light);
+  padding: 0.6rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 18px rgba(16, 54, 125, 0.3);
   overflow: visible;
 }
 
@@ -159,9 +159,24 @@ app-footer {
 }
 
 .header-logo-img {
-  width: 90px;
-  height: 90px;
+  height: 52px;
+  width: auto;
   object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+.home-header .btn-outline-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.home-header .btn-outline-secondary:hover,
+.home-header .btn-outline-secondary:focus {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .header-logo-icon {
@@ -180,9 +195,10 @@ app-footer {
 
 .header-subtitle {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: rgba(235, 235, 235, 0.85);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .header-right {
@@ -276,7 +292,7 @@ app-footer {
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 128, 128, 0.2);
+  box-shadow: 0 8px 32px rgba(16, 54, 125, 0.2);
 }
 
 .welcome-banner::before {
@@ -309,7 +325,7 @@ app-footer {
 }
 
 .welcome-text .user-name {
-  color: #a7f3d0;
+  color: #EBEBEB;
 }
 
 .welcome-text p {
@@ -337,22 +353,22 @@ app-footer {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--white);
-  border: 1px solid var(--border-color);
+  background: var(--royal-green);
+  border: 1px solid var(--royal-green);
   border-radius: 50px;
   padding: 0.5rem 1.25rem;
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: rgba(235, 235, 235, 0.9);
   box-shadow: var(--shadow-sm);
 }
 
 .stat-pill i {
-  color: var(--royal-green);
+  color: var(--royal-green-light);
   font-size: 1rem;
 }
 
 .stat-pill strong {
-  color: var(--text-dark);
+  color: var(--white);
 }
 
 /* ===== Tiles Grid ===== */
@@ -386,14 +402,14 @@ app-footer {
   left: 0;
   width: 100%;
   height: 3px;
-  background: transparent;
+  background: var(--royal-green-light);
   transition: background 0.3s;
 }
 
 .module-tile:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-  border-color: transparent;
+  box-shadow: 0 12px 40px rgba(16, 54, 125, 0.25);
+  border-color: var(--royal-green-light);
 }
 
 .module-tile:hover::before {
@@ -508,7 +524,11 @@ app-footer {
 
 @media (max-width: 768px) {
   .home-header {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .header-logo-img {
+    height: 40px;
   }
 
   .home-main {

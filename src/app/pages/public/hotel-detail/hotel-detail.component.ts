@@ -152,14 +152,14 @@ export class HotelDetailComponent implements OnInit {
 
   normalizeMealImageUrl(url: string | undefined): string {
     if (!url) return '';
-    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+    if (url.startsWith('/uploads')) return url;
     return url;
   }
 
   normalizeImageUrl(url: string | undefined): string {
     if (!url) return '';
     let normalized = url.replace(/\\/g, '/');
-    if (normalized.startsWith('/uploads')) return `http://localhost:5000${normalized}`;
+    if (normalized.startsWith('/uploads')) return normalized;
     if (!normalized.startsWith('/') && !normalized.startsWith('http')) {
       normalized = '/' + normalized;
     }

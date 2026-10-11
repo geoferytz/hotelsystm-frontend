@@ -17,6 +17,19 @@ export interface Theme {
 }
 
 export const THEMES: Record<string, Theme> = {
+  navy: {
+    name: 'Navy Blue',
+    primary: '#10367D',
+    primaryDark: '#0B2658',
+    primaryLight: '#74B4D9',
+    primaryPale: '#EBEBEB',
+    sidebarBg: '#0B2658',
+    sidebarHover: '#16418F',
+    offWhite: '#EBEBEB',
+    borderColor: '#d5dde8',
+    textDark: '#16233f',
+    textMuted: '#5a6b85',
+  },
   green: {
     name: 'Royal Green',
     primary: '#1B6B3A',
@@ -90,7 +103,7 @@ export const THEMES: Record<string, Theme> = {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly STORAGE_KEY = 'hms_theme';
-  private currentThemeSubject = new BehaviorSubject<string>('teal');
+  private currentThemeSubject = new BehaviorSubject<string>('navy');
 
   constructor() {
     const saved = localStorage.getItem(this.STORAGE_KEY);
@@ -131,9 +144,9 @@ export class ThemeService {
     root.style.setProperty('--sidebar-bg', theme.sidebarBg);
     root.style.setProperty('--sidebar-hover', theme.sidebarHover);
     root.style.setProperty('--white', theme.white || '#ffffff');
-    root.style.setProperty('--off-white', theme.offWhite || '#f6faf7');
-    root.style.setProperty('--border-color', theme.borderColor || '#d4e8da');
-    root.style.setProperty('--text-dark', theme.textDark || '#1a2e22');
-    root.style.setProperty('--text-muted', theme.textMuted || '#5a7264');
+    root.style.setProperty('--off-white', theme.offWhite || '#EBEBEB');
+    root.style.setProperty('--border-color', theme.borderColor || '#d5dde8');
+    root.style.setProperty('--text-dark', theme.textDark || '#16233f');
+    root.style.setProperty('--text-muted', theme.textMuted || '#5a6b85');
   }
 }

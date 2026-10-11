@@ -36,12 +36,12 @@
 }
 
 .stat-chip i {
-  color: var(--royal-primary, #008080);
+  color: var(--royal-green, #10367D);
   font-size: 1rem;
 }
 
 .stat-chip strong {
-  color: var(--royal-primary, #008080);
+  color: var(--royal-green, #10367D);
 }
 
 .room-numbers-preview {
@@ -60,7 +60,7 @@
 }
 
 .preview-tag {
-  background: var(--royal-primary, #008080);
+  background: var(--royal-green, #10367D);
   color: #fff;
   border-radius: 6px;
   padding: 3px 10px;

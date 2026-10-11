@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, TemplateRef } from '@angular/core';
 import { SharedPaginationComponent } from '../shared-pagination/shared-pagination.component';
 
 export interface SharedTableColumn {
@@ -53,6 +53,9 @@ export class SharedTableComponent {
   sortKey = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   Math = Math;
+
+  openMenuRow: any = null;
+  menuStyle: { [key: string]: string } = {};
 
   get pagedData(): any[] {
     if (!this.showPagination || this.totalItems > this.data.length) {
@@ -115,5 +118,55 @@ export class SharedTableComponent {
 
   isActionDisabled(action: SharedTableAction, row: any): boolean {
     return action.disabled ? action.disabled(row) : false;
+  }
+
+  hasVisibleActions(row: any): boolean {
+    return this.actions.some(a => this.isActionVisible(a, row));
+  }
+
+  menuItemClass(action: SharedTableAction): string {
+    const c = action.class || '';
+    if (c.includes('danger')) return 'item-danger';
+    if (c.includes('warning')) return 'item-warning';
+    if (c.includes('success')) return 'item-success';
+    if (c.includes('info')) return 'item-info';
+    return '';
+  }
+
+  toggleMenu(row: any, event: Event): void {
+    event.stopPropagation();
+    if (this.openMenuRow === row) {
+      this.openMenuRow = null;
+      return;
+    }
+    const btn = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const menuHeight = 40 * this.actions.length + 16;
+    if (btn.bottom + menuHeight > window.innerHeight) {
+      this.menuStyle = {
+        bottom: `${window.innerHeight - btn.top + 6}px`,
+        right: `${window.innerWidth - btn.right}px`,
+      };
+    } else {
+      this.menuStyle = {
+        top: `${btn.bottom + 6}px`,
+        right: `${window.innerWidth - btn.right}px`,
+      };
+    }
+    this.openMenuRow = row;
+  }
+
+  onMenuAction(action: SharedTableAction, row: any, event: Event): void {
+    this.openMenuRow = null;
+    this.triggerAction(action, row, event);
+  }
+
+  @HostListener('document:click')
+  closeMenu(): void {
+    this.openMenuRow = null;
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (this.openMenuRow) this.openMenuRow = null;
   }
 }

@@ -4,7 +4,7 @@
 }
 
 .bookings-header {
-  background: linear-gradient(135deg, #1b6b3a 0%, #0d3d22 100%);
+  background: linear-gradient(135deg, #10367D 0%, #0B2658 100%);
   color: white;
   padding: 40px;
   display: flex;
@@ -75,7 +75,7 @@
 .hotel-info h3 {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #1b6b3a;
+  color: #10367D;
   margin-bottom: 8px;
 }
 
@@ -102,8 +102,8 @@
 }
 
 .status-checked-in {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #74B4D9;
+  color: #0B2658;
 }
 
 .status-checked-out {
@@ -146,7 +146,7 @@
 }
 
 .detail-row .value.price {
-  color: #1b6b3a;
+  color: #10367D;
   font-weight: 700;
   font-size: 1.1rem;
 }

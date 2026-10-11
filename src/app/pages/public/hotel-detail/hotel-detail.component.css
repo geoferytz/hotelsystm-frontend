@@ -5,7 +5,7 @@
 }
 
 .hotel-hero {
-  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #0d3318 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, #0B2658 100%);
   color: #fff;
   padding: 2.5rem 0;
 }
@@ -67,7 +67,7 @@
 }
 
 .info-item i {
-  color: #008080;
+  color: #10367D;
   font-size: 1.2rem;
 }
 
@@ -101,8 +101,8 @@
 }
 
 .tab-btn.active {
-  color: #008080;
-  border-bottom-color: #008080;
+  color: #10367D;
+  border-bottom-color: #10367D;
   background: white;
 }
 
@@ -188,8 +188,8 @@
 
 .btn-view {
   background: transparent;
-  border: 1.5px solid #008080;
-  color: #008080;
+  border: 1.5px solid #10367D;
+  color: #10367D;
   font-weight: 600;
   border-radius: 8px;
   padding: 10px;
@@ -203,7 +203,7 @@
 }
 
 .btn-view:hover {
-  background: #008080;
+  background: #10367D;
   color: #fff;
 }
 
@@ -217,13 +217,13 @@
 .room-header h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #008080;
+  color: #10367D;
   margin: 0;
 }
 
 .room-type {
-  background: #e0f2f1;
-  color: #008080;
+  background: #EBEBEB;
+  color: #10367D;
   padding: 6px 12px;
   border-radius: 15px;
   font-size: 0.85rem;
@@ -269,13 +269,13 @@
 .room-price {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #008080;
+  color: #10367D;
 }
 
 .service-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #008080 0%, #006666 100%);
+  background: linear-gradient(135deg, #10367D 0%, #0B2658 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -335,7 +335,7 @@
 .meal-price {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #008080;
+  color: #10367D;
   white-space: nowrap;
 }
 
@@ -355,8 +355,8 @@
 }
 
 .meal-tags span {
-  background: #e0f2f1;
-  color: #008080;
+  background: #EBEBEB;
+  color: #10367D;
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 0.78rem;
@@ -372,7 +372,7 @@
 .hotel-map-section h3 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #008080;
+  color: #10367D;
   margin-bottom: 20px;
 }
 

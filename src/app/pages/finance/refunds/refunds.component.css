@@ -92,7 +92,7 @@
 }
 
 .modal-header-animated {
-  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #2d7a45 100%);
+  background: var(--royal-green, #10367D);
   color: white;
   border-radius: var(--radius) var(--radius) 0 0;
 }
@@ -102,7 +102,7 @@
 }
 
 .modal-title {
-  color: var(--royal-green-dark);
+  color: #fff;
   font-weight: 700;
 }
 

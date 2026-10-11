@@ -141,7 +141,7 @@ export class RoomsComponent implements OnInit {
 
   resolveImageUrl(url: string): string {
     if (!url) return '';
-    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+    if (url.startsWith('/uploads')) return url;
     return url;
   }
 

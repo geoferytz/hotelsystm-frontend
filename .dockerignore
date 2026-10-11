@@ -1,0 +1,11 @@
+node_modules
+dist
+.angular
+.git
+.gitignore
+*.log
+.vscode
+.idea
+deploy.ps1
+remote-deploy.sh
+deploy-frontend.sh

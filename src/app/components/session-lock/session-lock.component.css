@@ -8,7 +8,7 @@
 }
 
 .session-lock-header {
-  background: linear-gradient(135deg, var(--royal-primary, #008080) 0%, var(--royal-primary-dark, #006666) 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, var(--royal-green-dark, #0B2658) 100%);
   padding: 40px 30px 30px;
   text-align: center;
   position: relative;
@@ -106,9 +106,9 @@
 }
 
 .password-input:focus {
-  border-color: var(--royal-primary, #008080);
+  border-color: var(--royal-green, #10367D);
   background: white;
-  box-shadow: 0 0 0 4px rgba(0, 128, 128, 0.1);
+  box-shadow: 0 0 0 4px rgba(16, 54, 125, 0.1);
 }
 
 .toggle-password {
@@ -124,7 +124,7 @@
 }
 
 .toggle-password:hover {
-  color: var(--royal-primary, #008080);
+  color: var(--royal-green, #10367D);
 }
 
 .error-message {
@@ -159,15 +159,15 @@
   border-radius: 12px;
   font-weight: 600;
   font-size: 1rem;
-  background: linear-gradient(135deg, var(--royal-primary, #008080) 0%, var(--royal-primary-dark, #006666) 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, var(--royal-green-dark, #0B2658) 100%);
   border: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 128, 128, 0.4);
+  box-shadow: 0 4px 15px rgba(16, 54, 125, 0.4);
 }
 
 .unlock-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 128, 128, 0.5);
+  box-shadow: 0 6px 20px rgba(16, 54, 125, 0.5);
 }
 
 .unlock-btn:active {
@@ -208,7 +208,7 @@
 .warning-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, var(--royal-primary, #008080) 0%, var(--royal-primary-dark, #006666) 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, var(--royal-green-dark, #0B2658) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -246,7 +246,7 @@
 }
 
 .countdown {
-  color: var(--royal-primary, #008080);
+  color: var(--royal-green, #10367D);
   font-weight: 700;
   font-size: 1.2rem;
 }
@@ -263,13 +263,13 @@
   border-radius: 10px;
   font-weight: 600;
   font-size: 0.95rem;
-  background: linear-gradient(135deg, var(--royal-primary, #008080) 0%, var(--royal-primary-dark, #006666) 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, var(--royal-green-dark, #0B2658) 100%);
   border: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 54, 125, 0.3);
 }
 
 .continue-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 128, 128, 0.4);
+  box-shadow: 0 6px 16px rgba(16, 54, 125, 0.4);
 }

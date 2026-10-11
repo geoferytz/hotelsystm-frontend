@@ -120,7 +120,7 @@ export class RoomDetailComponent implements OnInit {
   normalizeImageUrl(url: string | undefined): string {
     if (!url) return '';
     let n = url.replace(/\\/g, '/');
-    if (n.startsWith('/uploads')) return `http://localhost:5000${n}`;
+    if (n.startsWith('/uploads')) return n;
     if (!n.startsWith('/') && !n.startsWith('http')) n = '/' + n;
     return n;
   }

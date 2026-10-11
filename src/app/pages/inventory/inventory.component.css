@@ -44,10 +44,10 @@
 
 .tab-btn:hover,
 .tab-btn.active {
-  background: #008080;
-  border-color: #008080;
+  background: #10367D;
+  border-color: #10367D;
   color: #fff;
-  box-shadow: 0 6px 18px rgba(0, 128, 128, 0.22);
+  box-shadow: 0 6px 18px rgba(16, 54, 125, 0.22);
 }
 
 .filters {
@@ -68,9 +68,10 @@
 }
 
 .table th {
-  background: #f8f9fa;
+  background: var(--royal-green, #10367D);
+  color: #fff;
   font-weight: 600;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: none;
 }
 
 .table td {
@@ -108,7 +109,7 @@
 }
 
 .inventory-modal-header {
-  background: linear-gradient(135deg, #008080, #12a6a6);
+  background: var(--royal-green, #10367D);
   color: #fff;
   border-bottom: 0;
   padding: 20px 24px;
@@ -156,7 +157,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #008080;
+  color: #10367D;
   font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
@@ -180,8 +181,8 @@
 
 .inventory-item-modal .form-control:focus,
 .inventory-item-modal .form-select:focus {
-  border-color: #008080;
-  box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.15);
+  border-color: #10367D;
+  box-shadow: 0 0 0 0.2rem rgba(16, 54, 125, 0.15);
 }
 
 .inventory-modal-footer {
@@ -195,8 +196,8 @@
 }
 
 .modal-header {
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
+  background: var(--royal-green, #10367D);
+  border-bottom: 2px solid var(--royal-green-light, #74B4D9);
 }
 
 .modal-footer {

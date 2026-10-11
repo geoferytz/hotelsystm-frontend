@@ -6,7 +6,7 @@
 }
 
 .page-header h3 {
-  color: var(--royal-green, #1a5c2e);
+  color: var(--royal-green, #10367D);
   font-weight: 700;
   margin: 0;
   display: flex;
@@ -15,7 +15,7 @@
 }
 
 .back-arrow {
-  color: var(--royal-green, #1a5c2e);
+  color: var(--royal-green, #10367D);
   text-decoration: none;
   font-size: 1.5rem;
   transition: opacity 0.3s ease;
@@ -32,14 +32,113 @@
 }
 
 .table thead th {
-  border-color: var(--royal-green, #1a5c2e);
+  border-color: rgba(255, 255, 255, 0.12);
   font-weight: 600;
 }
 
 .table tbody tr:hover {
-  background-color: var(--royal-green-pale, #e8f5e9);
+  background-color: rgba(116, 180, 217, 0.14);
 }
 
 .form-select-sm {
   min-width: 120px;
+}
+
+/* ===== Action dropdown menu ===== */
+.action-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.action-menu-toggle {
+  border: 1px solid var(--border-color, #e5e7eb);
+  background: var(--white, #fff);
+  color: var(--text-muted, #6b7280);
+  border-radius: 8px;
+  padding: 0.25rem 0.55rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.action-menu-toggle:hover {
+  color: var(--royal-green, #10367D);
+  border-color: var(--royal-green-light, #74B4D9);
+  background: var(--royal-green-pale, #EBEBEB);
+}
+
+.action-menu-list {
+  position: fixed;
+  z-index: 1060;
+  min-width: 170px;
+  background: var(--white, #fff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.14));
+  padding: 6px;
+  animation: menuFadeIn 0.15s ease-out;
+}
+
+@keyframes menuFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.action-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-dark, #111827);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.action-menu-item:hover:not(:disabled) {
+  background: var(--royal-green-pale, #EBEBEB);
+  color: var(--royal-green-dark, #0B2658);
+}
+
+.action-menu-item i {
+  font-size: 0.9rem;
+}
+
+.action-menu-item.item-danger {
+  color: #dc2626;
+}
+
+.action-menu-item.item-danger:hover:not(:disabled) {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-menu-item.item-warning {
+  color: #d97706;
+}
+
+.action-menu-item.item-warning:hover:not(:disabled) {
+  background: #fef3c7;
+}
+
+.action-menu-item.item-success {
+  color: #16a34a;
+}
+
+.action-menu-item.item-success:hover:not(:disabled) {
+  background: #dcfce7;
+}
+
+.action-menu-item.item-info {
+  color: #2563eb;
+}
+
+.action-menu-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }

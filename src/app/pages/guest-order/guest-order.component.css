@@ -26,7 +26,7 @@
 }
 
 .back-arrow:hover {
-  background: var(--royal-green, #008080);
+  background: var(--royal-green, #10367D);
   color: var(--white, white);
   transform: scale(1.1);
 }
@@ -50,7 +50,7 @@
 }
 
 .card-header {
-  background: linear-gradient(135deg, var(--royal-green, #008080) 0%, var(--royal-green-dark, #006666) 100%);
+  background: var(--royal-green, #10367D);
   color: var(--white, white);
   padding: 16px 20px;
   border: none;
@@ -116,7 +116,7 @@
 .menu-item-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  border-color: var(--royal-green, #008080);
+  border-color: var(--royal-green, #10367D);
 }
 
 .menu-item-image {
@@ -166,7 +166,7 @@
 
 .menu-item-price {
   font-weight: 700;
-  color: var(--royal-green, #008080);
+  color: var(--royal-green, #10367D);
   font-size: 1rem;
 }
 
@@ -209,7 +209,7 @@
 .total-amount {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--royal-green, #008080);
+  color: var(--royal-green, #10367D);
 }
 
 .order-item {
@@ -258,5 +258,5 @@
 
 .order-amount {
   font-weight: 600;
-  color: var(--royal-green, #008080);
+  color: var(--royal-green, #10367D);
 }

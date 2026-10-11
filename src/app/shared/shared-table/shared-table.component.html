@@ -27,11 +27,17 @@
             </ng-container>
           </td>
           <td *ngIf="actions.length" class="text-end">
-            <div class="d-flex justify-content-end gap-2">
-              <button *ngFor="let action of actions" type="button" class="btn btn-sm" [ngClass]="action.class || 'btn-outline-primary'" [disabled]="isActionDisabled(action, row)" [title]="action.label" (click)="triggerAction(action, row, $event)" [hidden]="!isActionVisible(action, row)">
-                <i *ngIf="action.icon" class="bi" [ngClass]="action.icon"></i>
-                <span *ngIf="!action.icon">{{ action.label }}</span>
+            <div class="action-menu">
+              <button type="button" class="btn btn-sm action-menu-toggle" title="Actions" (click)="toggleMenu(row, $event)">
+                <i class="bi bi-three-dots-vertical"></i>
               </button>
+              <div class="action-menu-list" *ngIf="openMenuRow === row" [style]="menuStyle" (click)="$event.stopPropagation()">
+                <button *ngFor="let action of actions" type="button" class="action-menu-item" [ngClass]="menuItemClass(action)" [disabled]="isActionDisabled(action, row)" [hidden]="!isActionVisible(action, row)" (click)="onMenuAction(action, row, $event)">
+                  <i *ngIf="action.icon" class="bi" [ngClass]="action.icon"></i>
+                  <span>{{ action.label }}</span>
+                </button>
+                <div class="action-menu-empty" *ngIf="!hasVisibleActions(row)">No actions</div>
+              </div>
             </div>
           </td>
         </tr>
@@ -40,6 +46,33 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="mobile-table-cards">
+    <div *ngIf="loading" class="mobile-empty-state">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <div *ngFor="let row of pagedData; trackBy: trackByRow" class="mobile-table-card" (click)="rowClick.emit(row)">
+      <div *ngFor="let column of columns; let first = first" class="mobile-table-field" [class.primary-field]="first">
+        <div class="mobile-table-label">{{ column.label }}</div>
+        <div class="mobile-table-value" [class.text-center]="column.align === 'center'" [class.text-end]="column.align === 'end'">
+          <ng-container [ngSwitch]="column.type">
+            <ng-container *ngSwitchCase="'template'">
+              <ng-container *ngTemplateOutlet="column.template || null; context: { $implicit: row, value: getValue(row, column.key) }"></ng-container>
+            </ng-container>
+            <span *ngSwitchCase="'status'" class="badge" [ngClass]="'bg-' + statusClass(row, column)">{{ displayValue(row, column) }}</span>
+            <span *ngSwitchDefault>{{ displayValue(row, column) }}</span>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="actions.length" class="mobile-table-actions">
+        <button *ngFor="let action of actions" type="button" class="btn btn-sm" [ngClass]="action.class || 'btn-outline-primary'" [disabled]="isActionDisabled(action, row)" [title]="action.label" (click)="triggerAction(action, row, $event)" [hidden]="!isActionVisible(action, row)">
+          <i *ngIf="action.icon" class="bi" [ngClass]="action.icon"></i>
+          <span>{{ action.label }}</span>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="!loading && pagedData.length === 0" class="mobile-empty-state text-muted">{{ emptyMessage }}</div>
   </div>
 
   <app-shared-pagination

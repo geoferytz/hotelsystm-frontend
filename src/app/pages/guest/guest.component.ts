@@ -79,7 +79,7 @@ export class GuestComponent implements OnInit {
   imageUrl(url: string | undefined): string {
     if (!url) return '';
     let normalized = url.replace(/\\/g, '/');
-    if (normalized.startsWith('/uploads')) return `http://localhost:5000${normalized}`;
+    if (normalized.startsWith('/uploads')) return normalized;
     if (!normalized.startsWith('/') && !normalized.startsWith('http')) {
       normalized = '/' + normalized;
     }

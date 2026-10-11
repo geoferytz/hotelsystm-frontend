@@ -2,7 +2,7 @@
 
 /* Invoice Details Modal */
 .invoice-header {
-  background: linear-gradient(135deg, var(--royal-green, #1a5c2e) 0%, #2d7a45 100%);
+  background: linear-gradient(135deg, var(--royal-green, #10367D) 0%, #74B4D9 100%);
   color: white;
   border-radius: 0;
 }
@@ -65,7 +65,7 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--royal-green, #1a5c2e);
+  color: var(--royal-green, #10367D);
   margin-bottom: 10px;
   letter-spacing: 0.5px;
 }
@@ -84,18 +84,18 @@
 .invoice-section-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--royal-green, #1a5c2e);
+  color: var(--royal-green, #10367D);
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 .invoice-table-head th {
-  background: var(--royal-green, #1a5c2e);
+  background: var(--royal-green, #10367D);
   color: white;
   font-size: 13px;
   border-color: transparent;
 }
-.extra-charge-row { background: #f0faf3; }
+.extra-charge-row { background: #eef4fb; }
 .extra-charge-row td { font-size: 13px; }
 
 .extra-charge-form {

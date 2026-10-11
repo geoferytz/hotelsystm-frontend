@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   greeting = '';
   today = new Date();
   unreadCount = 0;
-  currentTheme = 'green';
+  currentTheme = 'navy';
   showThemePicker = false;
   showUserMenu = false;
   themes: any[] = [];

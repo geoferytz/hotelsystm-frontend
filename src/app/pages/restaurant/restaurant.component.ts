@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -34,7 +34,42 @@ export class RestaurantComponent implements OnInit {
   totalPages = 1;
   Math = Math;
 
+  openMenuRow: any = null;
+  menuStyle: { [key: string]: string } = {};
+
   constructor(private api: ApiService, private toast: ToastService) {}
+
+  toggleMenu(key: any, itemCount: number, event: Event): void {
+    event.stopPropagation();
+    if (this.openMenuRow === key) {
+      this.openMenuRow = null;
+      return;
+    }
+    const btn = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const menuHeight = 40 * itemCount + 16;
+    if (btn.bottom + menuHeight > window.innerHeight) {
+      this.menuStyle = {
+        bottom: `${window.innerHeight - btn.top + 6}px`,
+        right: `${window.innerWidth - btn.right}px`,
+      };
+    } else {
+      this.menuStyle = {
+        top: `${btn.bottom + 6}px`,
+        right: `${window.innerWidth - btn.right}px`,
+      };
+    }
+    this.openMenuRow = key;
+  }
+
+  @HostListener('document:click')
+  closeMenu(): void {
+    this.openMenuRow = null;
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (this.openMenuRow) this.openMenuRow = null;
+  }
 
   ngOnInit(): void {
     this.loadRestaurants();
@@ -248,7 +283,7 @@ export class RestaurantComponent implements OnInit {
 
   imageUrl(url: string): string {
     if (!url) return '';
-    if (url.startsWith('/uploads')) return `http://localhost:5000${url}`;
+    if (url.startsWith('/uploads')) return url;
     return url;
   }
 }

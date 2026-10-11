@@ -390,9 +390,9 @@ export class BillingComponent implements OnInit {
     w.document.write(`<html><head><title>Invoice #${b.id}</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-      body{font-family:'Poppins',Arial,sans-serif;padding:0;margin:0;color:#1a2e22;background:#f6faf7}
-      .invoice-container{max-width:800px;margin:40px auto;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,128,128,0.15);overflow:hidden}
-      .header{background:linear-gradient(135deg,#006666 0%,#008080 100%);padding:30px 40px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+      body{font-family:'Poppins',Arial,sans-serif;padding:0;margin:0;color:#16233f;background:#EBEBEB}
+      .invoice-container{max-width:800px;margin:40px auto;background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(16, 54, 125,0.15);overflow:hidden}
+      .header{background:linear-gradient(135deg,#0B2658 0%,#10367D 100%);padding:30px 40px;color:#fff;display:flex;justify-content:space-between;align-items:center}
       .logo{font-size:28px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:12px}
       .logo-icon{width:55px;height:55px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid rgba(255,255,255,0.3);font-weight:800;font-size:32px;color:#fff}
       .logo-text{display:flex;flex-direction:column;line-height:1.2}
@@ -403,28 +403,28 @@ export class BillingComponent implements OnInit {
       .invoice-number span{font-size:14px;font-weight:400;opacity:0.8;display:block}
       .content{padding:40px}
       .grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:30px}
-      .card{background:#e0f2f1;border-radius:10px;padding:20px;border-left:4px solid #008080}
-      .card h4{margin:0 0 15px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#006666;font-weight:600}
-      .card p{margin:8px 0;font-size:13px;color:#5a7264;display:flex;justify-content:space-between}
-      .card p strong{color:#1a2e22}
+      .card{background:#EBEBEB;border-radius:10px;padding:20px;border-left:4px solid #10367D}
+      .card h4{margin:0 0 15px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#0B2658;font-weight:600}
+      .card p{margin:8px 0;font-size:13px;color:#5a6b85;display:flex;justify-content:space-between}
+      .card p strong{color:#16233f}
       table{width:100%;border-collapse:collapse;margin:25px 0}
-      th{background:#008080;color:#fff;padding:15px 20px;text-align:left;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+      th{background:#10367D;color:#fff;padding:15px 20px;text-align:left;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
       th:first-child{border-radius:8px 0 0 0}
       th:last-child{border-radius:0 8px 0 0}
-      td{padding:15px 20px;border-bottom:1px solid #d4e8da;font-size:13px;color:#5a7264}
+      td{padding:15px 20px;border-bottom:1px solid #d5dde8;font-size:13px;color:#5a6b85}
       tr:last-child td{border-bottom:none}
-      tr:hover{background:#e0f2f1}
-      .totals{width:300px;margin-left:auto;margin-top:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,128,128,0.1)}
+      tr:hover{background:#EBEBEB}
+      .totals{width:300px;margin-left:auto;margin-top:20px;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(16, 54, 125,0.1)}
       .totals td{border:none;padding:12px 20px;background:#fff}
-      .totals tr:nth-child(even){background:#e0f2f1}
-      .tot{font-weight:700;color:#006666;font-size:16px}
+      .totals tr:nth-child(even){background:#EBEBEB}
+      .tot{font-weight:700;color:#0B2658;font-size:16px}
       .bal{font-weight:700;color:#c0392b;font-size:16px}
-      .signature-section{margin-top:40px;padding-top:30px;border-top:2px dashed #d4e8da}
+      .signature-section{margin-top:40px;padding-top:30px;border-top:2px dashed #d5dde8}
       .signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:20px}
       .signature-box{text-align:center}
-      .signature-line{border-bottom:2px solid #008080;padding-bottom:10px;margin-bottom:10px;min-height:60px;display:flex;align-items:center;justify-content:center;color:#5a7264;font-style:italic;font-size:12px}
-      .signature-label{font-size:12px;color:#006666;text-transform:uppercase;letter-spacing:1px;font-weight:500}
-      .footer{text-align:center;margin-top:35px;color:#5a7264;font-size:12px;padding:20px;background:#e0f2f1;border-radius:10px}
+      .signature-line{border-bottom:2px solid #10367D;padding-bottom:10px;margin-bottom:10px;min-height:60px;display:flex;align-items:center;justify-content:center;color:#5a6b85;font-style:italic;font-size:12px}
+      .signature-label{font-size:12px;color:#0B2658;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+      .footer{text-align:center;margin-top:35px;color:#5a6b85;font-size:12px;padding:20px;background:#EBEBEB;border-radius:10px}
       .footer p{margin:5px 0}
       .badge{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
       .badge-paid{background:#d4edda;color:#155724}.badge-pending{background:#fff3cd;color:#856404}.badge-partial{background:#cce5ff;color:#004085}
@@ -471,7 +471,7 @@ export class BillingComponent implements OnInit {
           <tr><td>Paid Amount</td><td style="text-align:right">${parseFloat(b.paidAmount).toLocaleString()} Tsh</td></tr>
           <tr class="bal"><td>Balance Due</td><td style="text-align:right">${balance.toLocaleString()} Tsh</td></tr>
         </table>
-        <div style="margin-top:25px;padding:15px;background:#e0f2f1;border-radius:8px">
+        <div style="margin-top:25px;padding:15px;background:#EBEBEB;border-radius:8px">
           <p style="margin:5px 0;font-size:13px"><strong>Payment Method:</strong> ${b.paymentMethod || '-'}</p>
           <p style="margin:5px 0;font-size:13px"><strong>Status:</strong> <span class="badge badge-${b.paymentStatus}">${b.paymentStatus}</span></p>
           ${b.notes ? `<p style="margin:5px 0;font-size:13px"><strong>Notes:</strong> ${b.notes}</p>` : ''}

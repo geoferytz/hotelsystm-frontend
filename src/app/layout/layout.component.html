@@ -1,6 +1,22 @@
 <div class="app-wrapper">
+  <header class="mobile-app-header">
+    <button type="button" class="mobile-menu-btn" (click)="toggleMobileSidebar()" aria-label="Open menu">
+      <i class="bi bi-list"></i>
+    </button>
+    <a routerLink="/home" class="mobile-brand" (click)="closeMobileSidebar()">
+      <img src="assets/images/NABO.png" alt="NABO Logo">
+      <span>HMS</span>
+    </a>
+    <a routerLink="/notifications" class="mobile-icon-btn position-relative" aria-label="Notifications">
+      <i class="bi bi-bell"></i>
+      <span *ngIf="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+        {{ unreadCount }}
+      </span>
+    </a>
+  </header>
+  <div class="mobile-sidebar-backdrop" *ngIf="mobileSidebarOpen" (click)="closeMobileSidebar()"></div>
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" [class.open]="mobileSidebarOpen">
     <div class="sidebar-header">
       <a routerLink="/home" class="sidebar-logo-link">
         <img src="assets/images/NABO.png" alt="NABO Logo" class="sidebar-logo">
@@ -22,10 +38,10 @@
           <option *ngFor="let h of hotels" [value]="h.id">{{ h.name }}</option>
         </select>
       </div>
-      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="clearCategory()">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="clearCategory(); closeMobileSidebar()">
         <i class="bi bi-house-fill"></i> Home
       </a>
-      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileSidebar()">
         <i class="bi bi-grid-1x2-fill"></i> Dashboard
       </a>
 
@@ -156,10 +172,28 @@
           </span>
         </a>
         <!-- <span class="badge bg-primary">{{ user?.role | uppercase }}</span> -->
+        <div class="topbar-hotel-switcher position-relative">
+          <button class="btn btn-outline-secondary btn-sm" (click)="showHotelMenu = !showHotelMenu" [title]="'Current Hotel: ' + selectedHotelName" [disabled]="hotels.length === 0">
+            <i class="bi bi-building"></i>
+          </button>
+          <div class="hotel-dropdown" *ngIf="showHotelMenu" (click)="$event.stopPropagation()">
+            <div class="hotel-dropdown-header">Current Hotel</div>
+            <button type="button" class="hotel-item" *ngIf="hotels.length > 0" [class.active]="selectedHotelId === null" (click)="switchHotel(null)">
+              <i class="bi bi-buildings"></i>
+              <span>All Hotels</span>
+              <i class="bi bi-check-lg ms-auto" *ngIf="selectedHotelId === null"></i>
+            </button>
+            <button type="button" class="hotel-item" *ngFor="let h of hotels" [class.active]="selectedHotelId === h.id" (click)="switchHotel(h.id)">
+              <i class="bi bi-building"></i>
+              <span>{{ h.name }}</span>
+              <i class="bi bi-check-lg ms-auto" *ngIf="selectedHotelId === h.id"></i>
+            </button>
+            <div class="hotel-item text-muted" *ngIf="hotels.length === 0">Loading...</div>
+          </div>
+        </div>
         <div class="user-menu">
-          <button class="btn btn-outline-secondary btn-sm user-menu-btn" (click)="toggleUserMenu()" title="User Menu">
+          <button class="btn btn-outline-secondary btn-sm user-menu-btn" (click)="toggleUserMenu()" [title]="user?.fullName || 'User Menu'">
             <i class="bi bi-person-circle"></i>
-            <span class="ms-1">{{ user?.fullName }}</span>
           </button>
           <div class="user-dropdown" *ngIf="showUserMenu" (click)="$event.stopPropagation()">
             <div class="dropdown-header">
@@ -187,5 +221,27 @@
     </div>
     <app-footer></app-footer>
   </div>
+  <nav class="mobile-bottom-nav">
+    <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <i class="bi bi-house-fill"></i>
+      <span>Home</span>
+    </a>
+    <a routerLink="/bookings" routerLinkActive="active" *ngIf="canView('bookings')">
+      <i class="bi bi-calendar-check-fill"></i>
+      <span>Bookings</span>
+    </a>
+    <a routerLink="/rooms" routerLinkActive="active" *ngIf="canView('rooms')">
+      <i class="bi bi-door-open-fill"></i>
+      <span>Rooms</span>
+    </a>
+    <a routerLink="/billing" routerLinkActive="active" *ngIf="canView('billing')">
+      <i class="bi bi-receipt-cutoff"></i>
+      <span>Billing</span>
+    </a>
+    <button type="button" (click)="toggleMobileSidebar()">
+      <i class="bi bi-grid-3x3-gap-fill"></i>
+      <span>More</span>
+    </button>
+  </nav>
   <app-session-lock></app-session-lock>
 </div>
