@@ -68,7 +68,9 @@ try {
 
     # -- CHECKS -------------------------------------------------
     if (-not (Test-Path $VersionFile)) { Fail "$VersionFile haipo (inatakiwa iwe na semver, mfano 1.0.0)." }
-    $current = (Get-Content $VersionFile -Raw).Trim()
+    $current = (Get-Content $VersionFile -Raw)
+    if ($null -eq $current) { $current = '' }
+    $current = $current.Trim()
     if ($current -notmatch '^(\d+)\.(\d+)\.(\d+)$') { Fail "$VersionFile si semver: '$current'" }
     $major = [int]$Matches[1]; $minor = [int]$Matches[2]; $patch = [int]$Matches[3]
     switch ($Bump) {
