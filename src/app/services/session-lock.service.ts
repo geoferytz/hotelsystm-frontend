@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, timer, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, timer, Subscription, map, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionLockService {
-  private readonly INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+  private readonly INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
   private readonly WARNING_TIMEOUT = 30 * 1000; // 30 seconds before lock
   private inactivityTimer: Subscription | null = null;
   private warningTimer: Subscription | null = null;
@@ -20,7 +21,7 @@ export class SessionLockService {
   showWarning$: Observable<boolean> = this.showWarningSubject.asObservable();
   lockCountdown$: Observable<number> = this.lockCountdownSubject.asObservable();
   
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.initializeActivityTracking();
   }
   
@@ -93,14 +94,21 @@ export class SessionLockService {
     }
   }
   
-  unlockSession(password: string): boolean {
-    // In a real application, you would verify the password here
-    // For now, we'll just unlock the session
-    this.isLockedSubject.next(false);
-    this.showWarningSubject.next(false);
-    this.lockCountdownSubject.next(0);
-    this.resetInactivityTimer();
-    return true;
+  unlockSession(password: string): Observable<void> {
+    const user = this.authService.getStoredUser();
+    if (!user) {
+      return throwError(() => ({ status: 0 }));
+    }
+    // Verify the password by re-authenticating - a fresh token is stored on success
+    return this.authService.login(user.username, password).pipe(
+      tap(() => {
+        this.isLockedSubject.next(false);
+        this.showWarningSubject.next(false);
+        this.lockCountdownSubject.next(0);
+        this.resetInactivityTimer();
+      }),
+      map(() => void 0)
+    );
   }
   
   dismissWarning(): void {
@@ -122,9 +130,8 @@ export class SessionLockService {
       this.warningTimer.unsubscribe();
     }
     
-    // Navigate to login
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    // Clear session and navigate to login
+    this.authService.logout();
   }
   
   get isLocked(): boolean {

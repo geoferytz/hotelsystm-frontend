@@ -18,6 +18,7 @@ export class SessionLockComponent implements OnInit, OnDestroy {
   password = '';
   showPassword = false;
   errorMessage = '';
+  verifying = false;
   
   private isLockedSubscription: Subscription | null = null;
   private showWarningSubscription: Subscription | null = null;
@@ -63,14 +64,21 @@ export class SessionLockComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Password is required';
       return;
     }
-    
-    // In a real application, you would verify the password against the user's stored password
-    // For now, we'll accept any non-empty password
-    const unlocked = this.sessionLockService.unlockSession(this.password);
-    
-    if (!unlocked) {
-      this.errorMessage = 'Invalid password. Please try again.';
-    }
+
+    this.verifying = true;
+    this.errorMessage = '';
+    this.sessionLockService.unlockSession(this.password).subscribe({
+      next: () => {
+        this.verifying = false;
+      },
+      error: (err) => {
+        this.verifying = false;
+        this.password = '';
+        this.errorMessage = (err?.status === 400 || err?.status === 401)
+          ? 'Invalid password. Please try again.'
+          : 'Could not reach the server. Please try again.';
+      }
+    });
   }
   
   togglePasswordVisibility(): void {

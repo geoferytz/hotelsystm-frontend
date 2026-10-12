@@ -21,12 +21,13 @@
               <div class="input-wrapper">
                 <i class="bi bi-lock input-icon"></i>
                 <input 
-                  type="password" 
+                  [type]="showPassword ? 'text' : 'password'" 
                   class="form-control password-input" 
                   [(ngModel)]="password" 
                   name="password" 
                   placeholder="Enter your password"
                   required
+                  autocomplete="current-password"
                   (keyup.enter)="unlockSession()"
                 >
                 <button class="toggle-password" type="button" (click)="togglePasswordVisibility()">
@@ -39,8 +40,9 @@
             </div>
             
             <div class="action-buttons">
-              <button type="submit" class="btn btn-primary unlock-btn">
-                <i class="bi bi-unlock"></i> Unlock Session
+              <button type="submit" class="btn btn-primary unlock-btn" [disabled]="verifying">
+                <i class="bi" [ngClass]="verifying ? 'bi-hourglass-split' : 'bi-unlock'"></i>
+                {{ verifying ? 'Verifying...' : 'Unlock Session' }}
               </button>
               <button type="button" class="btn btn-outline-light logout-btn" (click)="logout()">
                 <i class="bi bi-box-arrow-right"></i> Logout
